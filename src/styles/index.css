@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reset e base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  background-color: #f9fafb;
+}
+
+/* Componentes customizados */
+.calculator-card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+}
+
+.calculator-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+         text-sm;
+}
+
+.calculator-button {
+  @apply px-4 py-2 rounded-md font-medium text-sm transition-colors duration-200
+         focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.calculator-button-primary {
+  @apply calculator-button bg-blue-600 text-white hover:bg-blue-700 
+         focus:ring-blue-500;
+}
+
+.calculator-button-secondary {
+  @apply calculator-button bg-gray-100 text-gray-700 hover:bg-gray-200 
+         focus:ring-gray-500;
+}
+
+.calculator-button-danger {
+  @apply calculator-button bg-red-600 text-white hover:bg-red-700 
+         focus:ring-red-500;
+}
+
+.calculator-tab {
+  @apply px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 
+         transition-colors duration-200 cursor-pointer;
+}
+
+.calculator-tab-active {
+  @apply calculator-tab text-blue-600 border-blue-600 bg-blue-50;
+}
+
+.calculator-tab-inactive {
+  @apply calculator-tab text-gray-500 border-transparent hover:text-gray-700 
+         hover:border-gray-300;
+}
+
+/* Animações */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .calculator-card {
+    @apply p-4;
+  }
+  
+  .calculator-input {
+    @apply text-base; /* iOS zoom fix */
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+  
+  body {
+    background: white;
+  }
+  
+  .calculator-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}

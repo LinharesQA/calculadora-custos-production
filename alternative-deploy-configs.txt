@@ -1,0 +1,29 @@
+# Configuracao para deploy em outras plataformas
+
+# Para Netlify - arquivo _redirects
+/*    /index.html   200
+
+# Para Vercel - arquivo vercel.json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
+
+# Scripts de build para diferentes plataformas
+# Netlify: npm run build (automatico)
+# Vercel: npm run build (automatico)  
+# Surge.sh: surge dist/ --domain calculadora-custos.surge.sh
