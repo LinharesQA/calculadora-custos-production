@@ -836,8 +836,13 @@
 
         // Google Authentication Functions
         function redirectToGoogleAuth() {
-            // Redireciona diretamente para o backend OAuth
-            window.location.href = 'http://localhost:3001/api/auth/google';
+            // Detecta o ambiente automaticamente
+            const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3001'
+                : `${window.location.protocol}//${window.location.hostname.replace('calculadora-', 'calculadora-backend-')}`;
+
+            console.log('Redirecting to:', `${backendUrl}/api/auth/google`);
+            window.location.href = `${backendUrl}/api/auth/google`;
         }
 
         // Check if user is returning from OAuth with token
