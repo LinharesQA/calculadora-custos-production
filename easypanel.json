@@ -1,36 +1,71 @@
 {
-  "name": "calculadora-custos-sublimacao",
-  "type": "static",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
-  "framework": "vite",
-  "nodeVersion": "18",
-  "environmentVariables": {},
-  "headers": [
+  "name": "calculadora-custos-fullstack",
+  "services": [
     {
-      "source": "/(.*)",
+      "name": "frontend",
+      "type": "static",
+      "buildCommand": "npm run build:frontend",
+      "outputDirectory": "dist",
+      "installCommand": "npm install",
+      "framework": "vite",
+      "nodeVersion": "18",
+      "environmentVariables": {
+        "VITE_API_URL": "https://calculadora-backend.easypanel.app"
+      },
       "headers": [
         {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
+          "source": "/(.*)",
+          "headers": [
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000"
+            }
+          ]
+        }
+      ],
+      "redirects": [
         {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
+          "source": "/",
+          "destination": "/index.html",
+          "permanent": false
         }
       ]
+    },
+    {
+      "name": "backend",
+      "type": "nodejs",
+      "startCommand": "cd backend-auth && npm start",
+      "installCommand": "npm install && cd backend-auth && npm install",
+      "buildCommand": "cd backend-auth && npm run setup-db",
+      "nodeVersion": "18",
+      "port": 3000,
+      "healthCheck": "/api/health",
+      "environmentVariables": {
+        "NODE_ENV": "production",
+        "PORT": "3000",
+        "JWT_SECRET": "$JWT_SECRET",
+        "DATABASE_URL": "$DATABASE_URL",
+        "GOOGLE_CLIENT_ID": "$GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET": "$GOOGLE_CLIENT_SECRET",
+        "FRONTEND_URL": "https://calculadora-frontend.easypanel.app"
+      }
     }
   ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/index.html",
-      "permanent": false
-    }
-  ]
+  "database": {
+    "type": "postgresql",
+    "name": "sublimacalc-db",
+    "version": "15"
+  }
 }

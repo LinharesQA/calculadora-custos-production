@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SublimaCalc - Dashboard</title>
+    <meta name="description"
+        content="Dashboard profissional para cálculo de custos de sublimação com otimização e relatórios detalhados">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff    ', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8',
+                            500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
+                        },
+                        secondary: {
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80',
+                            500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d', 950: '#052e16',
+                        },
+                        dark: {
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8',
+                            500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617',
+                        },
+                        glass: {
+                            50: 'rgba(255, 255, 255, 0.1)', 100: 'rgba(255, 255, 255, 0.15)', 200: 'rgba(255, 255, 255, 0.2)',
+                            300: 'rgba(255, 255, 255, 0.25)', 400: 'rgba(255, 255, 255, 0.3)', 500: 'rgba(255, 255, 255, 0.35)',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'slide-down': 'slideDown 0.5s ease-out',
+                        'scale-in': 'scaleIn 0.3s ease-out',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'gradient-shift': 'gradientShift 8s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        slideDown: { '0%': { opacity: '0', transform: 'translateY(-20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        scaleIn: { '0%': { opacity: '0', transform: 'scale(0.9)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
+                        float: { '0%, 100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-10px)' } },
+                        gradientShift: { '0%, 100%': { backgroundPosition: '0% 50%' }, '50%': { backgroundPosition: '100% 50%' } },
+                        glow: { '0%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)' }, '100%': { boxShadow: '0 0 40px rgba(99, 102, 241, 0.6)' } }
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+                        'tech-grid': "url(\"data:image/svg+xml,%3csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%23334155' fill-opacity='0.1'%3e%3ccircle cx='30' cy='30' r='1'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e\")",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+    <script src="js/api-client.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient-animated {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .glass-dark {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
+        }
+
+        .neo-card {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            box-shadow:
+                20px 20px 60px #d1d5db,
+                -20px -20px 60px #ffffff,
+                inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .neo-card:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                25px 25px 70px #d1d5db,
+                -25px -25px 70px #ffffff,
+                inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .neo-button {
+            background: linear-gradient(145deg, #6366f1, #4f46e5);
+            box-shadow:
+                8px 8px 16px rgba(79, 70, 229, 0.3),
+                -8px -8px 16px rgba(99, 102, 241, 0.3),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .neo-button:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                10px 10px 20px rgba(79, 70, 229, 0.4),
+                -10px -10px 20px rgba(99, 102, 241, 0.4),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .neo-button:active {
+            transform: translateY(0);
+            box-shadow:
+                4px 4px 8px rgba(79, 70, 229, 0.3),
+                -4px -4px 8px rgba(99, 102, 241, 0.3),
+                inset 4px 4px 8px rgba(0, 0, 0, 0.1),
+                inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .cyber-grid {
+            background-image:
+                linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.5);
+            box-shadow:
+                0 8px 32px rgba(99, 102, 241, 0.3),
+                inset 0 1px 0 rgba(34, 197, 94, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #6366f1, #4f46e5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #4f46e5, #4338ca);
+        }
+
+        /* Custom scrollbar for library lists */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Library item styles */
+        .library-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .library-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .library-item-content {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .library-item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .library-item:hover .library-item-icon {
+            transform: scale(1.1);
+        }
+
+        .library-item-info h5 {
+            color: white;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            font-size: 15px;
+        }
+
+        .library-item-info p {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .library-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .library-item-actions button {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .edit-btn {
+            background: rgba(99, 102, 241, 0.3);
+            color: #8b5cf6;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+        }
+
+        .edit-btn:hover {
+            background: rgba(99, 102, 241, 0.5);
+            color: #a78bfa;
+            transform: scale(1.15);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+            transform: scale(1.15);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Hover glow effect */
+        .hover-glow:hover {
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.4), 0 0 60px rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        /* Enhanced glow for cards */
+        .stat-card:hover {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 1));
+            box-shadow:
+                0 12px 40px rgba(99, 102, 241, 0.4),
+                inset 0 1px 0 rgba(34, 197, 94, 0.6),
+                0 0 30px rgba(34, 197, 94, 0.3);
+            transform: translateY(-5px) scale(1.05);
+            border-color: rgba(34, 197, 94, 0.7);
+        }
+
+        /* Tab buttons enhanced */
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(34, 197, 94, 0.4));
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5);
+            border: 1px solid rgba(34, 197, 94, 0.6);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-animated min-h-screen cyber-grid">
+    <!-- Floating Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div
+            class="absolute top-20 left-20 w-72 h-72 bg-primary-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 floating-element">
+        </div>
+        <div class="absolute top-40 right-20 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 floating-element"
+            style="animation-delay: 2s;"></div>
+        <div class="absolute -bottom-8 left-1/2 w-72 h-72 bg-emerald-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 floating-element"
+            style="animation-delay: 4s;"></div>
+        <div class="absolute top-1/2 left-10 w-48 h-48 bg-indigo-600 rounded-full mix-blend-multiply filter blur-xl opacity-25 floating-element"
+            style="animation-delay: 6s;"></div>
+        <div class="absolute bottom-32 right-1/3 w-56 h-56 bg-blue-700 rounded-full mix-blend-multiply filter blur-xl opacity-25 floating-element"
+            style="animation-delay: 8s;"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="relative z-10 glass-dark backdrop-blur-xl border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center space-x-4">
+                    <div class="neo-card w-12 h-12 flex items-center justify-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center shadow-lg">
+                            <i class="fas fa-calculator text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1
+                            class="text-2xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                            SublimaCalc
+                        </h1>
+                        <p class="text-white/60 text-sm font-medium">Dashboard Profissional</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <!-- User Info -->
+                    <div class="flex items-center space-x-3 glass rounded-full px-4 py-2">
+                        <img id="user-avatar" src="" alt="Avatar" class="w-8 h-8 rounded-full border-2 border-white/20"
+                            style="display: none;">
+                        <div class="text-right">
+                            <span id="user-name" class="text-white font-medium text-sm">Carregando...</span>
+                            <div class="text-white/60 text-xs">Usuário Logado</div>
+                        </div>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <button onclick="logout()"
+                        class="neo-button text-white px-6 py-2 text-sm font-semibold hover:text-white/90 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Sair
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="stat-card rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white text-sm font-semibold">Moldes Cadastrados</p>
+                        <p class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent"
+                            id="total-molds">0</p>
+                    </div>
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-blue-500 to-green-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-shapes text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 h-1 bg-gradient-to-r from-blue-400 to-green-400 rounded-full"></div>
+            </div>
+
+            <div class="stat-card rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white text-sm font-semibold">Tipos de Bobina</p>
+                        <p class="text-3xl font-bold bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent"
+                            id="total-rolls">0</p>
+                    </div>
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-scroll text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 h-1 bg-gradient-to-r from-green-400 to-blue-400 rounded-full"></div>
+            </div>
+
+            <div class="stat-card rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white text-sm font-semibold">Projetos Salvos</p>
+                        <p class="text-3xl font-bold bg-gradient-to-r from-blue-300 to-green-300 bg-clip-text text-transparent"
+                            id="total-projects">0</p>
+                    </div>
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-blue-600 to-green-400 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-folder-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 h-1 bg-gradient-to-r from-blue-300 to-green-300 rounded-full"></div>
+            </div>
+
+            <div class="stat-card rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white text-sm font-semibold">Último Cálculo</p>
+                        <p class="text-xl font-bold bg-gradient-to-r from-green-300 to-blue-300 bg-clip-text text-transparent"
+                            id="last-calculation">Nunca</p>
+                    </div>
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-green-600 to-blue-400 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-clock text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 h-1 bg-gradient-to-r from-green-300 to-blue-300 rounded-full"></div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="glass-dark rounded-3xl shadow-2xl border border-white/10 mb-8 overflow-hidden">
+            <div class="border-b border-white/10">
+                <nav class="flex space-x-8 px-8 py-2">
+                    <button
+                        class="tab-btn active py-4 px-6 border-b-2 border-primary-400 font-semibold text-white bg-gradient-to-r from-primary-500/20 to-primary-600/20 rounded-t-lg transition-all duration-300"
+                        data-tab="config">
+                        <i class="fas fa-cog mr-2"></i>
+                        Configurações
+                    </button>
+                    <button
+                        class="tab-btn py-4 px-6 border-b-2 border-transparent font-medium text-slate-300 hover:text-white hover:bg-slate-700/30 rounded-t-lg transition-all duration-300"
+                        data-tab="planning">
+                        <i class="fas fa-clipboard-list mr-2"></i>
+                        Planejamento
+                    </button>
+                    <button
+                        class="tab-btn py-4 px-6 border-b-2 border-transparent font-medium text-slate-300 hover:text-white hover:bg-slate-700/30 rounded-t-lg transition-all duration-300"
+                        data-tab="projects">
+                        <i class="fas fa-folder mr-2"></i>
+                        Projetos Salvos
+                    </button>
+                    <button
+                        class="tab-btn py-4 px-6 border-b-2 border-transparent font-medium text-slate-300 hover:text-white hover:bg-slate-700/30 rounded-t-lg transition-all duration-300"
+                        data-tab="analytics">
+                        <i class="fas fa-chart-bar mr-2"></i>
+                        Análises
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-8">
+                <!-- Seção 1: Configuração das Bibliotecas -->
+                <div id="config-tab" class="tab-content active">
+                    <!-- Header da seção -->
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-white mb-3">Configurações do Sistema</h2>
+                        <p class="text-white/70 text-lg">Gerencie suas bibliotecas de moldes e bobinas</p>
+                    </div>
+
+                    <!-- Cards das bibliotecas -->
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 max-w-7xl mx-auto">
+
+                        <!-- Card Biblioteca de Moldes -->
+                        <div
+                            class="glass-dark rounded-3xl p-8 border border-slate-600/30 hover:border-blue-400/40 transition-all duration-500 hover-glow">
+                            <!-- Header do card -->
+                            <div class="flex items-center justify-between mb-8">
+                                <div class="flex items-center space-x-4">
+                                    <div
+                                        class="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-300">
+                                        <i class="fas fa-shapes text-white text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-white">Biblioteca de Moldes</h3>
+                                        <p class="text-white/70 text-sm">Gerencie seus moldes de sublimação</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-primary-400 to-purple-400 bg-clip-text text-transparent"
+                                        id="mold-count">0</div>
+                                    <div class="text-white/60 text-sm font-medium">moldes</div>
+                                </div>
+                            </div>
+
+                            <!-- Formulário para adicionar molde -->
+                            <div
+                                class="glass-dark rounded-2xl p-6 mb-6 border border-white/10 hover:border-primary-300/30 transition-all duration-300">
+                                <h4 class="text-white font-semibold mb-4 flex items-center">
+                                    <i class="fas fa-plus-circle text-primary-400 mr-2"></i>
+                                    Adicionar Novo Molde
+                                </h4>
+                                <div class="space-y-4">
+                                    <input type="text" id="new-mold-name"
+                                        placeholder="Nome do molde (ex: Caneca Branca 325ml)"
+                                        class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/30 transition-all duration-300">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <input type="number" id="new-mold-width" placeholder="Largura (cm)" step="0.1"
+                                            class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/30 transition-all duration-300">
+                                        <input type="number" id="new-mold-height" placeholder="Altura (cm)" step="0.1"
+                                            class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/30 transition-all duration-300">
+                                    </div>
+                                    <button id="add-mold-btn"
+                                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-indigo-500/30 transform hover:scale-[1.02] hover-glow">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Adicionar Molde
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Lista de moldes -->
+                            <div class="space-y-3">
+                                <h4 class="text-white font-semibold text-sm uppercase tracking-wider flex items-center">
+                                    <i class="fas fa-list text-primary-400 mr-2"></i>
+                                    Moldes Cadastrados
+                                </h4>
+                                <div id="mold-library-list" class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
+                                    <div class="text-white/50 text-center py-8">
+                                        <i class="fas fa-shapes text-5xl mb-3 text-primary-300/30"></i>
+                                        <p class="font-medium">Nenhum molde cadastrado ainda</p>
+                                        <p class="text-sm mt-1 opacity-60">Adicione seu primeiro molde acima</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Biblioteca de Bobinas -->
+                        <div
+                            class="glass-dark rounded-3xl p-8 border border-slate-600/30 hover:border-emerald-400/40 transition-all duration-500 hover-glow">
+                            <!-- Header do card -->
+                            <div class="flex items-center justify-between mb-8">
+                                <div class="flex items-center space-x-4">
+                                    <div
+                                        class="w-16 h-16 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-300">
+                                        <i class="fas fa-scroll text-white text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-white">Biblioteca de Bobinas</h3>
+                                        <p class="text-white/70 text-sm">Gerencie suas bobinas de papel</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-secondary-400 to-green-400 bg-clip-text text-transparent"
+                                        id="roll-count">0</div>
+                                    <div class="text-white/60 text-sm font-medium">bobinas</div>
+                                </div>
+                            </div>
+
+                            <!-- Formulário para adicionar bobina -->
+                            <div
+                                class="glass-dark rounded-2xl p-6 mb-6 border border-white/10 hover:border-secondary-300/30 transition-all duration-300">
+                                <h4 class="text-white font-semibold mb-4 flex items-center">
+                                    <i class="fas fa-plus-circle text-secondary-400 mr-2"></i>
+                                    Adicionar Nova Bobina
+                                </h4>
+                                <div class="space-y-4">
+                                    <input type="text" id="new-roll-name"
+                                        placeholder="Nome da bobina (ex: Papel Sublimático A4)"
+                                        class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-secondary-400/60 focus:ring-2 focus:ring-secondary-400/30 transition-all duration-300">
+                                    <input type="number" id="new-roll-width" placeholder="Largura (cm)" step="0.1"
+                                        class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-secondary-400/60 focus:ring-2 focus:ring-secondary-400/30 transition-all duration-300">
+                                    <button id="add-roll-btn"
+                                        class="w-full bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-500/30 transform hover:scale-[1.02] hover-glow">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Adicionar Bobina
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Lista de bobinas -->
+                            <div class="space-y-3">
+                                <h4 class="text-white font-semibold text-sm uppercase tracking-wider flex items-center">
+                                    <i class="fas fa-list text-secondary-400 mr-2"></i>
+                                    Bobinas Cadastradas
+                                </h4>
+                                <div id="roll-library-list" class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
+                                    <div class="text-white/50 text-center py-8">
+                                        <i class="fas fa-scroll text-5xl mb-3 text-secondary-300/30"></i>
+                                        <p class="font-medium">Nenhuma bobina cadastrada ainda</p>
+                                        <p class="text-sm mt-1 opacity-60">Adicione sua primeira bobina acima</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 2: Planejamento de Produção -->
+                <div id="planning-tab" class="tab-content">
+                    <div class="space-y-8">
+                        <div class="flex items-center space-x-3">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-clipboard-list text-white text-lg"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Planejamento de Produção</h3>
+                        </div>
+
+                        <!-- Formulário de planejamento -->
+                        <div class="glass rounded-2xl p-8 border border-white/10">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                <select id="planning-mold-select"
+                                    class="glass px-4 py-3 rounded-xl text-white border border-white/10 focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all">
+                                    <option value="">Selecione um molde</option>
+                                </select>
+                                <input type="number" id="planning-qty" placeholder="Quantidade"
+                                    class="glass px-4 py-3 rounded-xl text-white placeholder-white/50 border border-white/10 focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all">
+                                <button id="add-planning-item-btn"
+                                    class="neo-button bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 font-semibold rounded-xl transition-all duration-300">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Adicionar Item
+                                </button>
+                                <button id="clear-planning-btn"
+                                    class="glass border border-slate-600/40 text-white px-6 py-3 rounded-xl hover:bg-slate-700/30 transition-all duration-300">
+                                    <i class="fas fa-trash mr-2"></i>
+                                    Limpar Tudo
+                                </button>
+                            </div>
+
+                            <!-- Lista de itens do planejamento -->
+                            <div id="planning-items-list" class="space-y-3 mb-8">
+                                <!-- Itens serão listados aqui -->
+                            </div>
+
+                            <!-- Configurações de cálculo -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                                <select id="calculation-roll-select"
+                                    class="glass px-4 py-3 rounded-xl text-white border border-white/10 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
+                                    <option value="">Selecione uma bobina</option>
+                                </select>
+                                <input type="number" id="roll-price" placeholder="Preço da bobina (R$)" step="0.01"
+                                    class="glass px-4 py-3 rounded-xl text-white placeholder-white/50 border border-white/10 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
+                                <input type="number" id="roll-length" placeholder="Comprimento (m)"
+                                    class="glass px-4 py-3 rounded-xl text-white placeholder-white/50 border border-white/10 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
+                                <input type="number" id="profit-margin" placeholder="Margem (%)" value="30"
+                                    class="glass px-4 py-3 rounded-xl text-white placeholder-white/50 border border-white/10 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
+                                <input type="number" id="additional-cost" placeholder="Custos extras (R$)" step="0.01"
+                                    value="0"
+                                    class="glass px-4 py-3 rounded-xl text-white placeholder-white/50 border border-white/10 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
+                            </div>
+
+                            <button id="calculate-btn"
+                                class="neo-button bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 font-bold rounded-xl w-full text-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/25">
+                                <i class="fas fa-calculator mr-3"></i>
+                                Calcular Custos
+                            </button>
+                        </div>
+
+                        <!-- Resultado do cálculo -->
+                        <div id="planning-result" class="glass rounded-2xl border border-green-200/20 p-8 hidden">
+                            <!-- Resultado será mostrado aqui -->
+                        </div>
+
+                        <!-- Salvar projeto -->
+                        <div id="save-project-section" class="glass rounded-2xl p-8 border border-white/10 hidden">
+                            <div class="flex gap-4 items-end">
+                                <div class="flex-1">
+                                    <label class="block text-sm font-medium text-white/80 mb-2">Nome do Projeto</label>
+                                    <input type="text" id="project-name" placeholder="Digite o nome do projeto"
+                                        class="glass w-full px-4 py-3 rounded-xl text-white placeholder-white/50 border border-white/10 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
+                                </div>
+                                <div>
+                                    <input type="date" id="project-date"
+                                        class="glass px-4 py-3 rounded-xl text-white border border-white/10 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
+                                </div>
+                                <button id="save-project-btn"
+                                    class="neo-button bg-gradient-to-r from-emerald-600 to-green-600 text-white px-6 py-3 font-semibold rounded-xl transition-all duration-300">
+                                    <i class="fas fa-save mr-2"></i>
+                                    Salvar Projeto
+                                </button>
+                                <button id="export-pdf-btn"
+                                    class="neo-button bg-gradient-to-r from-red-600 to-rose-600 text-white px-6 py-3 font-semibold rounded-xl transition-all duration-300">
+                                    <i class="fas fa-file-pdf mr-2"></i>
+                                    Exportar PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 3: Projetos Salvos -->
+                <div id="projects-tab" class="tab-content">
+                    <div class="space-y-8">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-3">
+                                <div
+                                    class="w-10 h-10 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-folder-open text-white text-lg"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white">Projetos Salvos</h3>
+                            </div>
+                            <button id="clear-projects-btn"
+                                class="glass border border-red-400/20 text-red-400 px-6 py-3 rounded-xl hover:bg-red-400/10 transition-all duration-300">
+                                <i class="fas fa-trash mr-2"></i>
+                                Limpar Todos
+                            </button>
+                        </div>
+                        <div id="saved-projects-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 4: Análises -->
+                <div id="analytics-tab" class="tab-content">
+                    <div class="space-y-8">
+                        <div class="flex items-center space-x-3">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-chart-bar text-white text-lg"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Análises e Relatórios</h3>
+                        </div>
+
+                        <!-- Resumo Estatístico -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="stat-card rounded-2xl p-6">
+                                <p class="text-white/80 text-sm font-medium">Total de Projetos</p>
+                                <p class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent"
+                                    id="stats-total-projects">0</p>
+                            </div>
+                            <div class="stat-card rounded-2xl p-6">
+                                <p class="text-white/80 text-sm font-medium">Valor Total Vendido</p>
+                                <p class="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent"
+                                    id="stats-total-value">R$ 0,00</p>
+                            </div>
+                            <div class="stat-card rounded-2xl p-6">
+                                <p class="text-dark-600 text-sm font-medium">Lucro Total</p>
+                                <p class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent"
+                                    id="stats-total-profit">R$ 0,00</p>
+                            </div>
+                            <div class="stat-card rounded-2xl p-6">
+                                <p class="text-dark-600 text-sm font-medium">Ticket Médio</p>
+                                <p class="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent"
+                                    id="stats-avg-ticket">R$ 0,00</p>
+                            </div>
+                        </div>
+
+                        <!-- Gráficos -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="glass rounded-2xl p-8 border border-white/10">
+                                <h4 class="font-semibold text-white mb-6 text-lg">Evolução de Projetos</h4>
+                                <canvas id="projects-chart" width="400" height="200"></canvas>
+                            </div>
+                            <div class="glass rounded-2xl p-8 border border-white/10">
+                                <h4 class="font-semibold text-white mb-6 text-lg">Moldes Mais Utilizados</h4>
+                                <canvas id="molds-chart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2">
+        <!-- Notificações serão adicionadas aqui -->
+    </div>
+
+    <script>
+        // Verificar autenticação na inicialização
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+            loadAppState();
+            loadUserData();
+            setupEventListeners();
+            renderAll();
+            updateDashboard();
+        });
+
+        // Verificar autenticação
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('user');
+
+            if (!token || !user) {
+                window.location.href = 'index-modern.html';
+                return;
+            }
+
+            try {
+                JSON.parse(user); // Verificar se é um JSON válido
+            } catch (e) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
+                window.location.href = 'index-modern.html';
+                return;
+            }
+        }
+
+        // Carregar dados do usuário
+        function loadUserData() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+            if (user.name) {
+                document.getElementById('user-name').textContent = user.name;
+            }
+
+            if (user.picture) {
+                const avatar = document.getElementById('user-avatar');
+                avatar.src = user.picture;
+                avatar.style.display = 'block';
+            }
+        }
+
+        // Estado da aplicação
+        let appState = {
+            molds: [],
+            rolls: [],
+            projects: [],
+            lastCalculation: null
+        };
+
+        let planningItems = [];
+        let currentProjectData = null;
+
+        // Carregar estado do localStorage
+        function loadAppState() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const saved = localStorage.getItem(`sublimationManager_${user.id}`);
+            if (saved) {
+                appState = JSON.parse(saved);
+            }
+        }
+
+        // Salvar estado no localStorage
+        function saveAppState() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            localStorage.setItem(`sublimationManager_${user.id}`, JSON.stringify(appState));
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Sistema de tabs
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.dataset.tab;
+
+                    // Remove active class from all tabs
+                    tabBtns.forEach(b => {
+                        b.classList.remove('active', 'border-primary-400', 'text-white', 'bg-gradient-to-r', 'from-primary-500/20', 'to-primary-600/20');
+                        b.classList.add('border-transparent', 'text-white/70');
+                    });
+
+                    // Add active class to clicked tab
+                    btn.classList.add('active', 'border-primary-400', 'text-white', 'bg-gradient-to-r', 'from-primary-500/20', 'to-primary-600/20');
+                    btn.classList.remove('border-transparent', 'text-white/70');
+
+                    // Hide all tab contents
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // Show target tab content
+                    document.getElementById(`${targetTab}-tab`).classList.add('active');
+
+                    // Update analytics if analytics tab is selected
+                    if (targetTab === 'analytics') {
+                        updateAnalytics();
+                    }
+                });
+            });
+
+            // Adicionar molde
+            document.getElementById('add-mold-btn').addEventListener('click', () => {
+                const name = document.getElementById('new-mold-name').value.trim();
+                const width = parseFloat(document.getElementById('new-mold-width').value);
+                const height = parseFloat(document.getElementById('new-mold-height').value);
+
+                if (name && width > 0 && height > 0) {
+                    appState.molds.push({
+                        name,
+                        width,
+                        height,
+                        createdAt: new Date().toISOString()
+                    });
+                    saveAppState();
+                    renderMolds();
+                    renderPlanningMoldSelect();
+                    updateDashboard();
+
+                    // Limpar inputs
+                    document.getElementById('new-mold-name').value = '';
+                    document.getElementById('new-mold-width').value = '';
+                    document.getElementById('new-mold-height').value = '';
+
+                    showNotification('Molde adicionado com sucesso!', 'success');
+                } else {
+                    showNotification('Preencha todos os campos do molde.', 'error');
+                }
+            });
+
+            // Adicionar bobina
+            document.getElementById('add-roll-btn').addEventListener('click', () => {
+                const name = document.getElementById('new-roll-name').value.trim();
+                const width = parseFloat(document.getElementById('new-roll-width').value);
+
+                if (name && width > 0) {
+                    appState.rolls.push({
+                        name,
+                        width,
+                        createdAt: new Date().toISOString()
+                    });
+                    saveAppState();
+                    renderRolls();
+                    renderCalculationRollSelect();
+                    updateDashboard();
+
+                    // Limpar inputs
+                    document.getElementById('new-roll-name').value = '';
+                    document.getElementById('new-roll-width').value = '';
+
+                    showNotification('Bobina adicionada com sucesso!', 'success');
+                } else {
+                    showNotification('Preencha todos os campos da bobina.', 'error');
+                }
+            });
+
+            // Event listeners para remoção
+            document.getElementById('mold-library-list').addEventListener('click', e => {
+                if (e.target.classList.contains('remove-mold-btn')) {
+                    const index = parseInt(e.target.dataset.index);
+                    appState.molds.splice(index, 1);
+                    saveAppState();
+                    renderMolds();
+                    renderPlanningMoldSelect();
+                    updateDashboard();
+                    showNotification('Molde removido!', 'info');
+                }
+            });
+
+            document.getElementById('roll-library-list').addEventListener('click', e => {
+                if (e.target.classList.contains('remove-roll-btn')) {
+                    const index = parseInt(e.target.dataset.index);
+                    appState.rolls.splice(index, 1);
+                    saveAppState();
+                    renderRolls();
+                    renderCalculationRollSelect();
+                    updateDashboard();
+                    showNotification('Bobina removida!', 'info');
+                }
+            });
+
+            // Adicionar item ao planejamento
+            document.getElementById('add-planning-item-btn').addEventListener('click', () => {
+                const moldIndex = document.getElementById('planning-mold-select').value;
+                const qty = parseInt(document.getElementById('planning-qty').value);
+
+                if (moldIndex !== '' && qty > 0) {
+                    const mold = appState.molds[moldIndex];
+                    planningItems.push({ mold, qty });
+                    renderPlanningItems();
+
+                    // Limpar inputs
+                    document.getElementById('planning-mold-select').value = '';
+                    document.getElementById('planning-qty').value = '';
+
+                    showNotification('Item adicionado ao planejamento!', 'success');
+                } else {
+                    showNotification('Selecione um molde e quantidade válida.', 'error');
+                }
+            });
+
+            // Limpar planejamento
+            document.getElementById('clear-planning-btn').addEventListener('click', () => {
+                planningItems = [];
+                renderPlanningItems();
+                document.getElementById('planning-result').classList.add('hidden');
+                document.getElementById('save-project-section').classList.add('hidden');
+                showNotification('Planejamento limpo!', 'info');
+            });
+
+            // Calcular custos
+            document.getElementById('calculate-btn').addEventListener('click', calculateCosts);
+
+            // Salvar projeto
+            document.getElementById('save-project-btn').addEventListener('click', saveProject);
+
+            // Exportar PDF
+            document.getElementById('export-pdf-btn').addEventListener('click', exportPDF);
+
+            // Limpar projetos
+            document.getElementById('clear-projects-btn').addEventListener('click', () => {
+                if (confirm('Tem certeza que deseja limpar todos os projetos?')) {
+                    appState.projects = [];
+                    saveAppState();
+                    renderSavedProjects();
+                    updateDashboard();
+                    showNotification('Todos os projetos foram removidos!', 'info');
+                }
+            });
+
+            // Set default date
+            document.getElementById('project-date').value = new Date().toISOString().split('T')[0];
+        }
+
+        // Renderizar moldes
+        function renderMolds() {
+            const container = document.getElementById('mold-library-list');
+            const countElement = document.getElementById('mold-count');
+
+            // Atualizar contador
+            countElement.textContent = appState.molds.length;
+
+            container.innerHTML = '';
+
+            if (appState.molds.length === 0) {
+                container.innerHTML = `
+                    <div class="text-white/50 text-center py-8">
+                        <i class="fas fa-shapes text-4xl mb-3 opacity-30"></i>
+                        <p>Nenhum molde cadastrado ainda</p>
+                        <p class="text-sm mt-1 opacity-60">Adicione seu primeiro molde acima</p>
+                    </div>
+                `;
+            } else {
+                appState.molds.forEach((mold, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'library-item';
+                    div.innerHTML = `
+                        <div class="library-item-content">
+                            <div class="library-item-icon bg-gradient-to-br from-primary-500 to-purple-600">
+                                <i class="fas fa-shapes text-white"></i>
+                            </div>
+                            <div class="library-item-info">
+                                <h5>${mold.name}</h5>
+                                <p>${mold.width}cm × ${mold.height}cm • Área: ${(mold.width * mold.height).toFixed(1)}cm²</p>
+                            </div>
+                        </div>
+                        <div class="library-item-actions">
+                            <button class="edit-btn" title="Editar molde">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button data-index="${index}" class="remove-mold-btn delete-btn" title="Remover molde">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // Renderizar bobinas
+        function renderRolls() {
+            const container = document.getElementById('roll-library-list');
+            const countElement = document.getElementById('roll-count');
+
+            // Atualizar contador
+            countElement.textContent = appState.rolls.length;
+
+            container.innerHTML = '';
+
+            if (appState.rolls.length === 0) {
+                container.innerHTML = `
+                    <div class="text-white/50 text-center py-8">
+                        <i class="fas fa-scroll text-4xl mb-3 opacity-30"></i>
+                        <p>Nenhuma bobina cadastrada ainda</p>
+                        <p class="text-sm mt-1 opacity-60">Adicione sua primeira bobina acima</p>
+                    </div>
+                `;
+            } else {
+                appState.rolls.forEach((roll, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'library-item';
+                    div.innerHTML = `
+                        <div class="library-item-content">
+                            <div class="library-item-icon bg-gradient-to-br from-secondary-500 to-green-600">
+                                <i class="fas fa-scroll text-white"></i>
+                            </div>
+                            <div class="library-item-info">
+                                <h5>${roll.name}</h5>
+                                <p>${roll.width}cm de largura • Papel sublimático</p>
+                            </div>
+                        </div>
+                        <div class="library-item-actions">
+                            <button class="edit-btn" title="Editar bobina">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button data-index="${index}" class="remove-roll-btn delete-btn" title="Remover bobina">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // Renderizar select de moldes para planejamento
+        function renderPlanningMoldSelect() {
+            const select = document.getElementById('planning-mold-select');
+            select.innerHTML = '<option value="">Selecione um molde</option>';
+
+            appState.molds.forEach((mold, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${mold.name} (${mold.width}×${mold.height}cm)`;
+                select.appendChild(option);
+            });
+        }
+
+        // Renderizar select de bobinas para cálculo
+        function renderCalculationRollSelect() {
+            const select = document.getElementById('calculation-roll-select');
+            select.innerHTML = '<option value="">Selecione uma bobina</option>';
+
+            appState.rolls.forEach((roll, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${roll.name} (${roll.width}cm)`;
+                select.appendChild(option);
+            });
+        }
+
+        // Renderizar itens do planejamento
+        function renderPlanningItems() {
+            const container = document.getElementById('planning-items-list');
+            container.innerHTML = '';
+
+            if (planningItems.length === 0) {
+                container.innerHTML = '<p class="text-sm text-white/50 italic">Nenhum item no planejamento.</p>';
+            } else {
+                planningItems.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center p-3 glass rounded-xl border border-white/10';
+                    div.innerHTML = `
+                        <span class="text-sm text-white">${item.qty}x ${item.mold.name} (${item.mold.width}×${item.mold.height}cm)</span>
+                        <button onclick="removePlanningItem(${index})" class="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-400/10 transition-all">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // Remover item do planejamento
+        function removePlanningItem(index) {
+            planningItems.splice(index, 1);
+            renderPlanningItems();
+            showNotification('Item removido do planejamento!', 'info');
+        }
+
+        // Calcular custos
+        function calculateCosts() {
+            if (planningItems.length === 0) {
+                showNotification('Adicione itens ao planejamento primeiro!', 'error');
+                return;
+            }
+
+            const rollIndex = document.getElementById('calculation-roll-select').value;
+            const rollPrice = parseFloat(document.getElementById('roll-price').value);
+            const rollLength = parseFloat(document.getElementById('roll-length').value);
+            const profitMargin = parseFloat(document.getElementById('profit-margin').value) || 30;
+            const additionalCost = parseFloat(document.getElementById('additional-cost').value) || 0;
+
+            if (rollIndex === '' || !rollPrice || !rollLength) {
+                showNotification('Preencha todos os dados da bobina!', 'error');
+                return;
+            }
+
+            const roll = appState.rolls[rollIndex];
+
+            // Calcular otimização para cada item
+            const calculationResults = planningItems.map(item => {
+                const moldsAcross = Math.floor(roll.width / item.mold.width);
+                const moldHeight = item.mold.height / 100; // converter para metros
+                const totalRows = Math.ceil(item.qty / moldsAcross);
+                const lengthNeeded = totalRows * moldHeight;
+                const areaNeeded = lengthNeeded * (roll.width / 100);
+
+                return {
+                    mold: item.mold,
+                    qty: item.qty,
+                    moldsAcross,
+                    totalRows,
+                    lengthNeeded,
+                    areaNeeded
+                };
+            });
+
+            // Calcular totais
+            const totalLengthNeededM = calculationResults.reduce((sum, item) => sum + item.lengthNeeded, 0);
+            const totalSqmNeeded = calculationResults.reduce((sum, item) => sum + item.areaNeeded, 0);
+            const totalPieces = planningItems.reduce((sum, item) => sum + item.qty, 0);
+
+            // Calcular custos
+            const paperCostPerMeter = rollPrice / rollLength;
+            const totalPaperCost = totalLengthNeededM * paperCostPerMeter;
+            const totalCostWithAdditional = totalPaperCost + additionalCost;
+            const costPerPiece = totalCostWithAdditional / totalPieces;
+
+            // Calcular preços de venda
+            const sellPricePerPiece = costPerPiece * (1 + profitMargin / 100);
+            const totalSellPrice = sellPricePerPiece * totalPieces;
+            const totalProfit = totalSellPrice - totalCostWithAdditional;
+
+            // Dados do projeto
+            const projectData = {
+                roll,
+                rollPrice,
+                rollLength,
+                profitMargin,
+                additionalCost,
+                items: calculationResults,
+                results: {
+                    totalPieces,
+                    totalLengthNeededM,
+                    totalSqmNeeded,
+                    totalPaperCost,
+                    totalCostWithAdditional,
+                    costPerPiece,
+                    sellPricePerPiece,
+                    totalSellPrice,
+                    totalProfit
+                },
+                calculatedAt: new Date().toISOString()
+            };
+
+            currentProjectData = projectData;
+            displayCalculationResults(projectData);
+
+            // Atualizar última calculação
+            appState.lastCalculation = new Date().toISOString();
+            saveAppState();
+            updateDashboard();
+
+            showNotification('Cálculo realizado com sucesso!', 'success');
+        }
+
+        // Exibir resultados do cálculo
+        function displayCalculationResults(data) {
+            const resultDiv = document.getElementById('planning-result');
+            const results = data.results;
+
+            resultDiv.innerHTML = `
+                <div class="space-y-6">
+                    <h4 class="text-xl font-bold text-white text-center flex items-center justify-center gap-2">
+                        <i class="fas fa-chart-line text-green-400"></i>
+                        Resultados do Cálculo
+                    </h4>
+                    
+                    <!-- Resumo Principal -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="stat-card p-4 rounded-xl text-center">
+                            <div class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">${results.totalPieces}</div>
+                            <div class="text-sm text-dark-600">Total de Peças</div>
+                        </div>
+                        <div class="stat-card p-4 rounded-xl text-center">
+                            <div class="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent">${results.totalSellPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                            <div class="text-sm text-dark-600">Valor Total de Venda</div>
+                        </div>
+                        <div class="stat-card p-4 rounded-xl text-center">
+                            <div class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent">${results.totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                            <div class="text-sm text-dark-600">Lucro Total</div>
+                        </div>
+                    </div>
+
+                    <!-- Detalhes de Custos -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="glass rounded-xl p-6 border border-green-200/20">
+                            <h5 class="font-semibold text-white mb-3 flex items-center gap-2">
+                                <i class="fas fa-calculator text-green-400"></i>
+                                Custos
+                            </h5>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white/80">Papel necessário:</span>
+                                    <span class="font-medium text-white">${results.totalLengthNeededM.toFixed(2)}m</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white/80">Área total:</span>
+                                    <span class="font-medium text-white">${results.totalSqmNeeded.toFixed(2)}m²</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white/80">Custo do papel:</span>
+                                    <span class="font-medium text-white">${results.totalPaperCost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white/80">Custos adicionais:</span>
+                                    <span class="font-medium text-white">${data.additionalCost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                                </div>
+                                <div class="border-t border-white/20 pt-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-semibold text-white">Total de custos:</span>
+                                        <span class="font-bold text-green-400">${results.totalCostWithAdditional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center mt-2">
+                                        <span class="font-semibold text-white">Custo por peça:</span>
+                                        <span class="font-bold text-green-400">${results.costPerPiece.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass rounded-xl p-6 border border-blue-200/20">
+                            <h5 class="font-semibold text-white mb-3 flex items-center gap-2">
+                                <i class="fas fa-dollar-sign text-blue-400"></i>
+                                Vendas
+                            </h5>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white/80">Margem de lucro:</span>
+                                    <span class="font-medium text-white">${data.profitMargin}%</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white/80">Preço por peça:</span>
+                                    <span class="font-medium text-white">${results.sellPricePerPiece.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white/80">Total de vendas:</span>
+                                    <span class="font-medium text-white">${results.totalSellPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                                </div>
+                                <div class="border-t border-white/20 pt-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-semibold text-white">Lucro total:</span>
+                                        <span class="font-bold text-blue-400">${results.totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center mt-2">
+                                        <span class="font-semibold text-white">Margem realizada:</span>
+                                        <span class="font-bold text-blue-400">${((results.totalProfit / results.totalCostWithAdditional) * 100).toFixed(1)}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detalhamento por Item -->
+                    <div class="glass rounded-xl p-6 border border-white/10">
+                        <h5 class="font-semibold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-list text-purple-400"></i>
+                            Detalhamento por Item
+                        </h5>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-white/20">
+                                        <th class="text-left p-3 font-medium text-white/80">Item</th>
+                                        <th class="text-center p-3 font-medium text-white/80">Qtd</th>
+                                        <th class="text-center p-3 font-medium text-white/80">Por Linha</th>
+                                        <th class="text-center p-3 font-medium text-white/80">Linhas</th>
+                                        <th class="text-center p-3 font-medium text-white/80">Comprimento</th>
+                                        <th class="text-center p-3 font-medium text-white/80">Área</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.items.map(item => `
+                                        <tr class="border-b border-white/10">
+                                            <td class="p-3 font-medium text-white">${item.mold.name}</td>
+                                            <td class="text-center p-3 text-white/80">${item.qty}x</td>
+                                            <td class="text-center p-3 text-white/80">${item.moldsAcross}</td>
+                                            <td class="text-center p-3 text-white/80">${item.totalRows}</td>
+                                            <td class="text-center p-3 text-white/80">${item.lengthNeeded.toFixed(2)}m</td>
+                                            <td class="text-center p-3 text-white/80">${item.areaNeeded.toFixed(2)}m²</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            resultDiv.classList.remove('hidden');
+            document.getElementById('save-project-section').classList.remove('hidden');
+        }
+
+        // Salvar projeto
+        function saveProject() {
+            if (!currentProjectData) {
+                showNotification('Nenhum cálculo realizado para salvar!', 'error');
+                return;
+            }
+
+            const projectName = document.getElementById('project-name').value.trim();
+            const projectDate = document.getElementById('project-date').value;
+
+            if (!projectName) {
+                showNotification('Digite um nome para o projeto!', 'error');
+                return;
+            }
+
+            const projectToSave = {
+                ...currentProjectData,
+                projectName,
+                projectDate,
+                savedAt: new Date().toISOString(),
+                id: Date.now().toString()
+            };
+
+            appState.projects.push(projectToSave);
+            saveAppState();
+            renderSavedProjects();
+            updateDashboard();
+
+            // Limpar form
+            document.getElementById('project-name').value = '';
+            document.getElementById('project-date').value = new Date().toISOString().split('T')[0];
+
+            showNotification('Projeto salvo com sucesso!', 'success');
+        }
+
+        // Exportar PDF
+        async function exportPDF() {
+            if (!currentProjectData) {
+                showNotification('Nenhum cálculo realizado para exportar!', 'error');
+                return;
+            }
+
+            try {
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                const projectName = document.getElementById('project-name').value.trim() || 'Projeto_sem_nome';
+
+                const dataToExport = {
+                    ...currentProjectData,
+                    projectName,
+                    companyName: user.name || 'Usuário',
+                    userName: user.name || 'Usuário'
+                };
+
+                // Importar jsPDF dinamicamente
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Cabeçalho
+                doc.setFontSize(20);
+                doc.setFont('helvetica', 'bold');
+                doc.text('RELATÓRIO DE CÁLCULO DE CUSTOS', 20, 20);
+
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'normal');
+                doc.text('SublimaCalc - Sistema de Cálculo para Sublimação', 20, 30);
+
+                // Linha separadora
+                doc.line(20, 35, 190, 35);
+
+                // Informações do projeto
+                let y = 45;
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text('PROJETO:', 20, y);
+                doc.setFont('helvetica', 'normal');
+                doc.text(dataToExport.projectName, 50, y);
+
+                y += 7;
+                doc.setFont('helvetica', 'bold');
+                doc.text('USUÁRIO:', 20, y);
+                doc.setFont('helvetica', 'normal');
+                doc.text(dataToExport.userName, 50, y);
+
+                y += 7;
+                doc.setFont('helvetica', 'bold');
+                doc.text('DATA:', 20, y);
+                doc.setFont('helvetica', 'normal');
+                doc.text(new Date().toLocaleDateString('pt-BR'), 50, y);
+
+                // Resultados
+                y += 20;
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('RESULTADOS:', 20, y);
+
+                y += 10;
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'normal');
+
+                const results = dataToExport.results;
+
+                doc.text(`• Total de peças: ${results.totalPieces}`, 25, y);
+                y += 6;
+                doc.text(`• Papel necessário: ${results.totalLengthNeededM.toFixed(2)}m`, 25, y);
+                y += 6;
+                doc.text(`• Área total: ${results.totalSqmNeeded.toFixed(2)}m²`, 25, y);
+                y += 6;
+                doc.text(`• Custo total: ${results.totalCostWithAdditional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y);
+                y += 6;
+                doc.text(`• Valor de venda: ${results.totalSellPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y);
+                y += 6;
+                doc.text(`• Lucro total: ${results.totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y);
+
+                // Salvar
+                const fileName = `relatorio_${projectName.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(fileName);
+
+                showNotification('PDF exportado com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro ao exportar PDF:', error);
+                showNotification('Erro ao exportar PDF', 'error');
+            }
+        }
+
+        // Renderizar projetos salvos
+        function renderSavedProjects() {
+            const container = document.getElementById('saved-projects-list');
+            container.innerHTML = '';
+
+            if (appState.projects.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-white/40 text-6xl mb-4">📋</div>
+                        <p class="text-white/60 text-lg">Nenhum projeto salvo ainda</p>
+                        <p class="text-white/40 text-sm">Faça um cálculo e salve seu primeiro projeto!</p>
+                    </div>
+                `;
+            } else {
+                appState.projects.reverse().forEach((project, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'glass rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 transform hover:scale-105';
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="font-bold text-lg text-white">${project.projectName}</h4>
+                            <div class="flex gap-2">
+                                <button onclick="viewProject(${appState.projects.length - 1 - index})" class="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-blue-400/10 transition-all" title="Visualizar">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="exportProject(${appState.projects.length - 1 - index})" class="text-green-400 hover:text-green-300 p-2 rounded-lg hover:bg-green-400/10 transition-all" title="Exportar PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                </button>
+                                <button onclick="deleteProject(${appState.projects.length - 1 - index})" class="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-400/10 transition-all" title="Excluir">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="space-y-2 text-sm text-white/80">
+                            <p class="flex justify-between"><span>Peças:</span> <span class="font-medium text-white">${project.results.totalPieces}</span></p>
+                            <p class="flex justify-between"><span>Valor de Venda:</span> <span class="font-medium text-green-400">${project.results.totalSellPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></p>
+                            <p class="flex justify-between"><span>Lucro:</span> <span class="font-medium text-blue-400">${project.results.totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></p>
+                            <p class="text-xs text-white/50 pt-2 border-t border-white/10">Salvo em: ${new Date(project.savedAt).toLocaleDateString('pt-BR')}</p>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // Visualizar projeto
+        function viewProject(index) {
+            const project = appState.projects[index];
+            // Implementar modal ou página de visualização
+            alert(`Projeto: ${project.projectName}\nPeças: ${project.results.totalPieces}\nValor: ${project.results.totalSellPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`);
+        }
+
+        // Exportar projeto específico
+        function exportProject(index) {
+            const project = appState.projects[index];
+            currentProjectData = project;
+            exportPDF();
+        }
+
+        // Deletar projeto
+        function deleteProject(index) {
+            if (confirm('Tem certeza que deseja excluir este projeto?')) {
+                appState.projects.splice(index, 1);
+                saveAppState();
+                renderSavedProjects();
+                updateDashboard();
+                showNotification('Projeto excluído!', 'info');
+            }
+        }
+
+        // Atualizar dashboard
+        function updateDashboard() {
+            document.getElementById('total-molds').textContent = appState.molds.length;
+            document.getElementById('total-rolls').textContent = appState.rolls.length;
+            document.getElementById('total-projects').textContent = appState.projects.length;
+            document.getElementById('last-calculation').textContent =
+                appState.lastCalculation ? new Date(appState.lastCalculation).toLocaleDateString('pt-BR') : 'Nunca';
+        }
+
+        // Atualizar análises
+        function updateAnalytics() {
+            if (appState.projects.length === 0) {
+                document.getElementById('stats-total-projects').textContent = '0';
+                document.getElementById('stats-total-value').textContent = 'R$ 0,00';
+                document.getElementById('stats-total-profit').textContent = 'R$ 0,00';
+                document.getElementById('stats-avg-ticket').textContent = 'R$ 0,00';
+                return;
+            }
+
+            const totalProjects = appState.projects.length;
+            const totalValue = appState.projects.reduce((sum, p) => sum + (p.results?.totalSellPrice || 0), 0);
+            const totalProfit = appState.projects.reduce((sum, p) => sum + (p.results?.totalProfit || 0), 0);
+            const avgTicket = totalValue / totalProjects;
+
+            document.getElementById('stats-total-projects').textContent = totalProjects;
+            document.getElementById('stats-total-value').textContent = totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('stats-total-profit').textContent = totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('stats-avg-ticket').textContent = avgTicket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Renderizar tudo
+        function renderAll() {
+            renderMolds();
+            renderRolls();
+            renderPlanningMoldSelect();
+            renderCalculationRollSelect();
+            renderPlanningItems();
+            renderSavedProjects();
+        }
+
+        // Sistema de notificações
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+
+            const colors = {
+                success: 'bg-gradient-to-r from-green-500 to-green-600',
+                error: 'bg-gradient-to-r from-red-500 to-red-600',
+                warning: 'bg-gradient-to-r from-yellow-500 to-yellow-600',
+                info: 'bg-gradient-to-r from-blue-500 to-blue-600'
+            };
+
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+
+            notification.className = `${colors[type]} text-white px-6 py-4 rounded-xl shadow-2xl transform transition-all duration-300 translate-x-full glass border border-white/20`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <i class="${icons[type]}"></i>
+                    <span class="font-medium">${message}</span>
+                </div>
+            `;
+
+            container.appendChild(notification);
+
+            // Animar entrada
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+
+            // Remover após 3 segundos
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        container.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
+                window.location.href = 'index-modern.html';
+            }
+        }
+    </script>
