@@ -1,8 +1,33 @@
 // API Client para comunicação com o backend
 class SublimaCalcAPI {
     constructor() {
-        this.baseURL = 'http://localhost:3001/api';
+        // Configuração dinâmica baseada no ambiente
+        this.baseURL = this.getBackendURL();
         this.token = localStorage.getItem('authToken');
+    }
+
+    // Detecta automaticamente a URL do backend
+    getBackendURL() {
+        // Usar configuração global se disponível
+        if (window.APP_CONFIG) {
+            return window.APP_CONFIG.getBackendURL();
+        }
+
+        // Fallback para detecção manual
+        const hostname = window.location.hostname;
+
+        // Ambiente local
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return 'http://localhost:3001/api';
+        }
+
+        // Ambiente de produção - EasyPanel
+        if (hostname.includes('easypanel.host')) {
+            return 'https://evo-api-calculadora-db.usg3xn.easypanel.host/api';
+        }
+
+        // Fallback para desenvolvimento
+        return 'http://localhost:3001/api';
     }
 
     // Headers padrão com autenticação
