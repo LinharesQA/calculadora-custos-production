@@ -4,7 +4,8 @@
   "description": "Sistema completo de cálculo de custos para sublimação",
   "main": "backend/server.js",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "echo 'Frontend estático - arquivos servidos via HTTP'",
+    "start:backend": "node backend/server.js",
     "backend": "node backend/server.js",
     "frontend": "echo 'Frontend servido via backend'",
     "build": "npm run build:frontend",
