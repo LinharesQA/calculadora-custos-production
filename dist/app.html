@@ -847,7 +847,7 @@
             const user = localStorage.getItem('user');
 
             if (!token || !user) {
-                window.location.href = 'index-modern.html';
+                window.location.href = '/';
                 return;
             }
 
@@ -856,7 +856,7 @@
             } catch (e) {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('user');
-                window.location.href = 'index-modern.html';
+                window.location.href = '/';
                 return;
             }
         }
@@ -1722,7 +1722,8 @@
             if (confirm('Tem certeza que deseja sair?')) {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('user');
-                window.location.href = 'index-modern.html';
+                localStorage.removeItem('isLoggedIn');
+                window.location.href = '/';
             }
         }
     </script>
