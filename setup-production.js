@@ -46,10 +46,10 @@ console.log('\n📦 Verificando dependências...');
 try {
     const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
     const backendPkg = JSON.parse(fs.readFileSync('backend-auth/package.json', 'utf8'));
-    
+
     console.log(`   ✅ Frontend: ${pkg.name}@${pkg.version}`);
     console.log(`   ✅ Backend: ${backendPkg.name}@${backendPkg.version}`);
-    
+
     // Verificar dependências críticas do backend
     const criticalDeps = ['express', 'sequelize', 'pg', 'jsonwebtoken', 'bcryptjs'];
     for (const dep of criticalDeps) {

@@ -6,7 +6,7 @@
 ```env
 NODE_ENV=production
 PORT=3000
-DATABASE_URL=[COLAR_URL_DO_POSTGRESQL_AQUI]
+DATABASE_URL=postgres://postgres:4948d9c9708f9de700ff@evo-api_calculadora-db:5432/calculadora_prod?sslmode=disable
 JWT_SECRET=a8f5f167f44f4964e6c998dee827110c284f5c4c7f4d5f5e3b5c5a5e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8
 FRONTEND_URL=https://[NOME-DO-SEU-FRONTEND].easypanel.app
 ```

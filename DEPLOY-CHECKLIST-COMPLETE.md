@@ -56,12 +56,7 @@ RATE_LIMIT_MAX=100
 ## 3. 🚀 CONFIGURAÇÃO DOS SERVIÇOS
 
 ### 3.1 Frontend (Static Site)
-- [ ] Tipo: **Static Site**
-- [ ] Repositório: Conectar seu repo Git
-- [ ] Branch: `main`
-- [ ] Build Command: `npm run build:frontend`
-- [ ] Output Directory: `./` (raiz, arquivos HTML)
-- [ ] Node Version: `18`
+ [ ] Build Command: (deixe vazio, site estático)
 
 ### 3.2 Backend (Node.js Service)
 - [ ] Tipo: **Node.js Service**

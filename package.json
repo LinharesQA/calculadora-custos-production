@@ -1,42 +1,38 @@
 {
   "name": "calculadora-custos",
   "version": "1.0.0",
-  "description": "Calculadora de Custos para Sublimação - Sistema Completo",
-  "main": "index.js",
-  "type": "module",
+  "description": "Sistema completo de cálculo de custos para sublimação",
+  "main": "backend/server.js",
   "scripts": {
-    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "frontend": "node serve-frontend.cjs",
-    "backend": "cd backend-auth && node server.js",
-    "start": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "backend:setup-db": "cd backend-auth && node create-database.js",
-    "clean": "rm -rf node_modules backend-auth/node_modules",
-    "setup": "npm install && cd backend-auth && npm install && npm run backend:setup-db",
+    "start": "node backend/server.js",
+    "backend": "node backend/server.js",
+    "frontend": "echo 'Frontend servido via backend'",
     "build": "npm run build:frontend",
     "build:frontend": "echo 'Frontend build completed - static files ready'",
-    "build:backend": "cd backend-auth && npm install --production",
-    "start:production": "cd backend-auth && npm start",
-    "db:migrate": "cd backend-auth && npm run setup-db",
-    "health": "curl -f http://localhost:3000/api/health || exit 1"
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "nodemon backend/server.js",
+    "dev:frontend": "echo 'Frontend em modo desenvolvimento'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "keywords": [
     "calculadora",
     "custos",
     "sublimacao",
-    "fullstack",
-    "react",
+    "nodejs",
     "express"
   ],
-  "author": "VisualizaAI",
-  "license": "MIT",
-  "devDependencies": {
-    "concurrently": "^8.2.2",
-    "serve": "^14.2.4"
-  },
-  "dependencies": {
-    "express": "^4.18.2"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  "author": "Seu Nome",
+  "license": "MIT"
 }
