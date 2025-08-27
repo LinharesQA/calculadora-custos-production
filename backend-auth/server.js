@@ -25,6 +25,9 @@ const calculationsRoutes = require('./routes/calculations');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Configurar trust proxy para EasyPanel
+app.set('trust proxy', 1);
+
 // Rate Limiting
 const limiter = rateLimit({
     windowMs: (process.env.RATE_LIMIT_WINDOW || 15) * 60 * 1000, // 15 minutos
@@ -177,10 +180,10 @@ async function startServer() {
         }
 
         // Iniciar servidor
-        app.listen(PORT, () => {
+        app.listen(PORT, '0.0.0.0', () => {
             console.log(`🚀 Servidor rodando na porta ${PORT}`);
-            console.log(`🌐 API disponível em http://localhost:${PORT}`);
-            console.log(`📊 Health check: http://localhost:${PORT}/health`);
+            console.log(`🌐 API disponível em http://0.0.0.0:${PORT}`);
+            console.log(`📊 Health check: http://0.0.0.0:${PORT}/health`);
         });
 
     } catch (error) {
