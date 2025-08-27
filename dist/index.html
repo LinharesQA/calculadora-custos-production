@@ -837,9 +837,14 @@
         // Google Authentication Functions
         function redirectToGoogleAuth() {
             // Detecta o ambiente automaticamente
-            const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? 'http://localhost:3001'
-                : `${window.location.protocol}//${window.location.hostname.replace('calculadora-', 'calculadora-backend-')}`;
+            let backendUrl;
+
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                backendUrl = 'http://localhost:3001';
+            } else {
+                // Para produção, usar o domínio específico do backend
+                backendUrl = 'https://evo-api-calculadora-backend.usg3xn.easypanel.host';
+            }
 
             console.log('Redirecting to:', `${backendUrl}/api/auth/google`);
             window.location.href = `${backendUrl}/api/auth/google`;
