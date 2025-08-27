@@ -37,7 +37,7 @@ router.get('/google/callback',
 
             // Redirecionar para frontend com token
             const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-            const redirectUrl = `${frontendUrl}/index-modern.html?token=${token}&user=${encodeURIComponent(JSON.stringify({
+            const redirectUrl = `${frontendUrl}/?token=${token}&user=${encodeURIComponent(JSON.stringify({
                 id: user.id,
                 name: user.name,
                 email: user.email,
