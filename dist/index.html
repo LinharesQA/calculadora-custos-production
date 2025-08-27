@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Custos - Sublimação</title>
+    <meta name="keywords" content="sublimação, custos, calculadora, produção, moldes, bobinas">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Header - Título limpo sem subtítulo -->
+    <div class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl md:text-4xl font-bold text-center">Calculadora de Custos - Sublimação</h1>
+        </div>
+    </div>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Dashboard Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total de Moldes</p>
+                        <p class="text-2xl font-bold text-blue-600" id="total-molds">0</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Tipos de Bobina</p>
+                        <p class="text-2xl font-bold text-green-600" id="total-rolls">0</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Projetos Salvos</p>
+                        <p class="text-2xl font-bold text-purple-600" id="total-projects">0</p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                            <path fill-rule="evenodd"
+                                d="M4 5a2 2 0 012-2v1a1 1 0 002 0V3a2 2 0 012 0v1a1 1 0 002 0V3a2 2 0 012 2v6.586l-.707.707A1 1 0 0010 12H8a1 1 0 00-.707.293L6.586 13H4V5z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Último Cálculo</p>
+                        <p class="text-lg font-bold text-orange-600" id="last-calculation">Nunca</p>
+                    </div>
+                    <div class="bg-orange-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Tabs Navigation -->
+        <div class="bg-white rounded-xl shadow-lg mb-8">
+            <div class="border-b border-gray-200">
+                <nav class="flex space-x-8 px-6">
+                    <button class="tab-btn active py-4 px-2 border-b-2 border-blue-500 font-medium text-blue-600"
+                        data-tab="config">
+                        Configurações
+                    </button>
+                    <button
+                        class="tab-btn py-4 px-2 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700"
+                        data-tab="planning">
+                        Planejamento
+                    </button>
+                    <button
+                        class="tab-btn py-4 px-2 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700"
+                        data-tab="projects">
+                        Projetos Salvos
+                    </button>
+                    <button
+                        class="tab-btn py-4 px-2 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700"
+                        data-tab="analytics">
+                        Análises
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6">
+                <!-- Seção 1: Configuração das Bibliotecas -->
+                <div id="config-tab" class="tab-content">
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Moldes -->
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <h3 class="font-semibold text-lg text-gray-700 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4z" />
+                                    </svg>
+                                    Biblioteca de Moldes
+                                </h3>
+                                <div id="mold-library-list" class="space-y-2 mb-4 max-h-60 overflow-y-auto"></div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    <input type="text" id="new-mold-name" placeholder="Nome (Ex: Camisa G)"
+                                        class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="number" id="new-mold-width" placeholder="Largura (cm)"
+                                            class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        <input type="number" id="new-mold-height" placeholder="Altura (cm)"
+                                            class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    </div>
+                                </div>
+                                <button id="add-mold-btn"
+                                    class="w-full mt-3 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 font-semibold transition-colors">
+                                    + Adicionar Molde
+                                </button>
+                            </div>
+
+                            <!-- Bobinas -->
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <h3 class="font-semibold text-lg text-gray-700 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Tipos de Bobina
+                                </h3>
+                                <div id="roll-library-list" class="space-y-2 mb-4 max-h-60 overflow-y-auto"></div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="text" id="new-roll-name" placeholder="Nome (Ex: Bobina Padrão)"
+                                        class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <input type="number" id="new-roll-width" placeholder="Largura (cm)"
+                                        class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                <button id="add-roll-btn"
+                                    class="w-full mt-3 bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 font-semibold transition-colors">
+                                    + Adicionar Bobina
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 2: Planejamento -->
+                <div id="planning-tab" class="tab-content hidden">
+                    <div class="space-y-6">
+                        <!-- Cabeçalho do Projeto -->
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg p-6 text-white">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Nome do Projeto</label>
+                                    <input type="text" id="project-name" placeholder="Ex: Camisas Evento XYZ"
+                                        class="w-full p-3 rounded-lg text-gray-800 placeholder-gray-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Data de Entrega</label>
+                                    <input type="date" id="project-date" class="w-full p-3 rounded-lg text-gray-800">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Margem de Lucro (%)</label>
+                                    <input type="number" id="profit-margin" placeholder="30" value="30"
+                                        class="w-full p-3 rounded-lg text-gray-800 placeholder-gray-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dados do Papel para Custo -->
+                        <div class="bg-blue-50 rounded-lg p-6">
+                            <h3 class="font-semibold text-lg text-gray-700 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                                    <path fill-rule="evenodd"
+                                        d="M4 5a2 2 0 012-2v1a1 1 0 002 0V3a2 2 0 012 0v1a1 1 0 002 0V3a2 2 0 012 2v6.586l-.707.707A1 1 0 0010 12H8a1 1 0 00-.707.293L6.586 13H4V5z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Dados do Papel (para cálculo de custo)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="text-sm text-gray-600 font-medium">Valor da Bobina (R$)</label>
+                                    <input type="number" id="cost-roll-price"
+                                        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        placeholder="250.00" step="0.01">
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-600 font-medium">Comprimento (m)</label>
+                                    <input type="number" id="cost-roll-length"
+                                        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        placeholder="100">
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-600 font-medium">Tipo de Bobina</label>
+                                    <select id="planning-roll-select"
+                                        class="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-blue-500"></select>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-600 font-medium">Custo Adicional (R$)</label>
+                                    <input type="number" id="additional-cost"
+                                        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        placeholder="0.00" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Itens da Produção -->
+                        <div class="bg-white border rounded-lg p-6">
+                            <h3 class="font-semibold text-lg text-gray-700 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                                </svg>
+                                Itens da Produção
+                            </h3>
+                            <div id="planning-item-list" class="space-y-3 mb-4 max-h-60 overflow-y-auto"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg">
+                                <select id="planning-mold-select"
+                                    class="p-3 border rounded-lg bg-white focus:ring-2 focus:ring-blue-500"></select>
+                                <input type="number" id="planning-new-qty" placeholder="Quantidade"
+                                    class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <button id="add-planning-item-btn"
+                                    class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 font-semibold transition-colors">
+                                    + Adicionar Item
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Botões de Ação -->
+                        <div class="flex flex-wrap gap-4 justify-center">
+                            <button id="calculate-planning-btn"
+                                class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-4 px-8 rounded-lg hover:from-indigo-700 hover:to-purple-700 text-lg transition-all shadow-lg">
+                                🧮 Calcular Produção
+                            </button>
+                            <button id="save-project-btn"
+                                class="bg-gradient-to-r from-green-600 to-blue-600 text-white font-bold py-4 px-8 rounded-lg hover:from-green-700 hover:to-blue-700 text-lg transition-all shadow-lg">
+                                💾 Salvar Projeto
+                            </button>
+                            <button id="export-pdf-btn"
+                                class="hidden bg-gradient-to-r from-red-600 to-pink-600 text-white font-bold py-4 px-8 rounded-lg hover:from-red-700 hover:to-pink-700 text-lg transition-all shadow-lg">
+                                📄 Exportar PDF
+                            </button>
+                        </div>
+
+                        <!-- Resultado -->
+                        <div id="planning-result" class="hidden"></div>
+                    </div>
+                </div>
+                <!-- Seção 3: Projetos Salvos -->
+                <div id="projects-tab" class="tab-content hidden">
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-gray-800">Projetos Salvos</h3>
+                            <button id="clear-projects-btn"
+                                class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                                🗑️ Limpar Todos
+                            </button>
+                        </div>
+                        <div id="saved-projects-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 4: Análises -->
+                <div id="analytics-tab" class="tab-content hidden">
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold text-gray-800">Análises e Relatórios</h3>
+
+                        <!-- Resumo Estatístico -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white border rounded-lg p-4">
+                                <h4 class="font-medium text-gray-600">Total de Projetos</h4>
+                                <p class="text-2xl font-bold text-blue-600" id="stats-total-projects">0</p>
+                            </div>
+                            <div class="bg-white border rounded-lg p-4">
+                                <h4 class="font-medium text-gray-600">Valor Total Calculado</h4>
+                                <p class="text-2xl font-bold text-green-600" id="stats-total-value">R$ 0,00</p>
+                            </div>
+                            <div class="bg-white border rounded-lg p-4">
+                                <h4 class="font-medium text-gray-600">Peças Totais</h4>
+                                <p class="text-2xl font-bold text-purple-600" id="stats-total-pieces">0</p>
+                            </div>
+                            <div class="bg-white border rounded-lg p-4">
+                                <h4 class="font-medium text-gray-600">Ticket Médio</h4>
+                                <p class="text-2xl font-bold text-orange-600" id="stats-avg-ticket">R$ 0,00</p>
+                            </div>
+                        </div>
+
+                        <!-- Gráficos -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-white border rounded-lg p-6">
+                                <h4 class="font-medium text-gray-700 mb-4">Evolução de Projetos</h4>
+                                <canvas id="projects-chart" width="400" height="200"></canvas>
+                            </div>
+                            <div class="bg-white border rounded-lg p-6">
+                                <h4 class="font-medium text-gray-700 mb-4">Moldes Mais Utilizados</h4>
+                                <canvas id="molds-chart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- ESTADO DA APLICAÇÃO E LOCALSTORAGE ---
+            let appState = {
+                molds: [],
+                rolls: [],
+                projects: [],
+                lastCalculation: null
+            };
+            let planningItems = [];
+            let currentProjectData = null;
+
+            const saveState = () => {
+                localStorage.setItem('sublimationManager', JSON.stringify(appState));
+            };
+
+            const loadState = () => {
+                const saved = localStorage.getItem('sublimationManager');
+                if (saved) {
+                    appState = JSON.parse(saved);
+                    updateDashboard();
+                }
+            }; const updateDashboard = () => {
+                document.getElementById('total-molds').textContent = appState.molds.length;
+                document.getElementById('total-rolls').textContent = appState.rolls.length;
+                document.getElementById('total-projects').textContent = appState.projects.length;
+                document.getElementById('last-calculation').textContent =
+                    appState.lastCalculation ? new Date(appState.lastCalculation).toLocaleDateString('pt-BR') : 'Nunca';
+            };
+
+            // --- SISTEMA DE TABS ---
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.dataset.tab;
+
+                    // Remove active class from all tabs
+                    tabBtns.forEach(b => {
+                        b.classList.remove('active', 'border-blue-500', 'text-blue-600');
+                        b.classList.add('border-transparent', 'text-gray-500');
+                    });
+
+                    // Add active class to clicked tab
+                    btn.classList.add('active', 'border-blue-500', 'text-blue-600');
+                    btn.classList.remove('border-transparent', 'text-gray-500');
+
+                    // Hide all tab contents
+                    tabContents.forEach(content => content.classList.add('hidden'));
+
+                    // Show target tab content
+                    document.getElementById(`${targetTab}-tab`).classList.remove('hidden');
+
+                    // Update analytics if analytics tab is selected
+                    if (targetTab === 'analytics') {
+                        updateAnalytics();
+                    }
+                });
+            });
+
+            // --- SEÇÃO 1: CONFIGURAÇÃO ---
+            const moldLibraryList = document.getElementById('mold-library-list');
+            const rollLibraryList = document.getElementById('roll-library-list');
+            const addMoldBtn = document.getElementById('add-mold-btn');
+            const addRollBtn = document.getElementById('add-roll-btn');
+
+            const renderMolds = () => {
+                moldLibraryList.innerHTML = '';
+                if (appState.molds.length === 0) {
+                    moldLibraryList.innerHTML = `<p class="text-sm text-gray-500 italic">Nenhum molde cadastrado.</p>`;
+                } else {
+                    appState.molds.forEach((mold, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'flex justify-between items-center p-3 bg-white rounded-lg shadow-sm card-hover';
+                        div.innerHTML = `
+                            <div>
+                                <span class="font-medium text-gray-800">${mold.name}</span>
+                                <div class="text-sm text-gray-500">${mold.width}cm × ${mold.height}cm (${(mold.width * mold.height / 10000).toFixed(2)}m²)</div>
+                            </div>
+                            <button data-index="${index}" class="remove-mold-btn text-red-500 hover:text-red-700 font-semibold transition-colors">
+                                🗑️
+                            </button>
+                        `;
+                        moldLibraryList.appendChild(div);
+                    });
+                }
+                renderPlanningMoldSelect();
+                updateDashboard();
+            };
+
+            const renderRolls = () => {
+                rollLibraryList.innerHTML = '';
+                if (appState.rolls.length === 0) {
+                    rollLibraryList.innerHTML = `<p class="text-sm text-gray-500 italic">Nenhuma bobina cadastrada.</p>`;
+                } else {
+                    appState.rolls.forEach((roll, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'flex justify-between items-center p-3 bg-white rounded-lg shadow-sm card-hover';
+                        div.innerHTML = `
+                            <div>
+                                <span class="font-medium text-gray-800">${roll.name}</span>
+                                <div class="text-sm text-gray-500">${roll.width}cm de largura</div>
+                            </div>
+                            <button data-index="${index}" class="remove-roll-btn text-red-500 hover:text-red-700 font-semibold transition-colors">
+                                🗑️
+                            </button>
+                        `;
+                        rollLibraryList.appendChild(div);
+                    });
+                }
+                renderPlanningRollSelect();
+                updateDashboard();
+            };
+
+            addMoldBtn.addEventListener('click', () => {
+                const name = document.getElementById('new-mold-name').value.trim();
+                const width = parseFloat(document.getElementById('new-mold-width').value);
+                const height = parseFloat(document.getElementById('new-mold-height').value);
+
+                if (name && width > 0 && height > 0) {
+                    appState.molds.push({ name, width, height, createdAt: new Date().toISOString() });
+                    saveState();
+                    renderMolds();
+                    // Clear inputs
+                    document.getElementById('new-mold-name').value = '';
+                    document.getElementById('new-mold-width').value = '';
+                    document.getElementById('new-mold-height').value = '';
+
+                    // Show success message
+                    showNotification('Molde adicionado com sucesso!', 'success');
+                } else {
+                    showNotification('Preencha todos os campos do molde.', 'error');
+                }
+            });
+
+            addRollBtn.addEventListener('click', () => {
+                const name = document.getElementById('new-roll-name').value.trim();
+                const width = parseFloat(document.getElementById('new-roll-width').value);
+
+                if (name && width > 0) {
+                    appState.rolls.push({ name, width, createdAt: new Date().toISOString() });
+                    saveState();
+                    renderRolls();
+                    // Clear inputs
+                    document.getElementById('new-roll-name').value = '';
+                    document.getElementById('new-roll-width').value = '';
+
+                    showNotification('Bobina adicionada com sucesso!', 'success');
+                } else {
+                    showNotification('Preencha todos os campos da bobina.', 'error');
+                }
+            });
+
+            // Event listeners for remove buttons
+            moldLibraryList.addEventListener('click', e => {
+                if (e.target.classList.contains('remove-mold-btn')) {
+                    appState.molds.splice(e.target.dataset.index, 1);
+                    saveState();
+                    renderMolds();
+                    showNotification('Molde removido!', 'info');
+                }
+            });
+
+            rollLibraryList.addEventListener('click', e => {
+                if (e.target.classList.contains('remove-roll-btn')) {
+                    appState.rolls.splice(e.target.dataset.index, 1);
+                    saveState();
+                    renderRolls();
+                    showNotification('Bobina removida!', 'info');
+                }
+            });
+
+            // --- SEÇÃO 2: PLANEJAMENTO ---
+            const planningRollSelect = document.getElementById('planning-roll-select');
+            const planningMoldSelect = document.getElementById('planning-mold-select');
+            const addPlanningItemBtn = document.getElementById('add-planning-item-btn');
+            const planningItemList = document.getElementById('planning-item-list');
+            const calculatePlanningBtn = document.getElementById('calculate-planning-btn');
+            const saveProjectBtn = document.getElementById('save-project-btn');
+            const exportPdfBtn = document.getElementById('export-pdf-btn');
+            const planningResultDiv = document.getElementById('planning-result');
+
+            const renderPlanningRollSelect = () => {
+                planningRollSelect.innerHTML = '<option value="">-- Selecione uma Bobina --</option>';
+                appState.rolls.forEach((roll, index) => {
+                    planningRollSelect.innerHTML += `<option value="${index}">${roll.name} (${roll.width}cm)</option>`;
+                });
+            };
+
+            const renderPlanningMoldSelect = () => {
+                planningMoldSelect.innerHTML = '<option value="">-- Selecione um Molde --</option>';
+                appState.molds.forEach((mold, index) => {
+                    planningMoldSelect.innerHTML += `<option value="${index}">${mold.name} (${mold.width}×${mold.height}cm)</option>`;
+                });
+            };
+
+            const renderPlanningItems = () => {
+                planningItemList.innerHTML = '';
+                if (planningItems.length === 0) {
+                    planningItemList.innerHTML = `<p class="text-sm text-gray-500 italic">Nenhum item adicionado à produção.</p>`;
+                } else {
+                    planningItems.forEach((item, index) => {
+                        const totalArea = (item.mold.width * item.mold.height * item.qty * 2) / 10000; // m²
+                        const div = document.createElement('div');
+                        div.className = 'flex justify-between items-center p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border card-hover';
+                        div.innerHTML = `
+                            <div>
+                                <span class="font-medium text-gray-800">${item.qty}x ${item.mold.name}</span>
+                                <div class="text-sm text-gray-500">
+                                    ${item.mold.width}×${item.mold.height}cm | 
+                                    ${item.qty * 2} impressões | 
+                                    ${totalArea.toFixed(2)}m² total
+                                </div>
+                            </div>
+                            <button data-index="${index}" class="remove-planning-item-btn text-red-500 hover:text-red-700 font-semibold transition-colors">
+                                🗑️
+                            </button>
+                        `;
+                        planningItemList.appendChild(div);
+                    });
+                }
+            };
+
+            addPlanningItemBtn.addEventListener('click', () => {
+                const moldIndex = document.getElementById('planning-mold-select').value;
+                const qty = parseInt(document.getElementById('planning-new-qty').value);
+
+                if (moldIndex !== '' && qty > 0) {
+                    planningItems.push({ mold: appState.molds[moldIndex], qty });
+                    renderPlanningItems();
+                    document.getElementById('planning-new-qty').value = '';
+                    document.getElementById('planning-mold-select').value = '';
+                    showNotification('Item adicionado ao planejamento!', 'success');
+                } else {
+                    showNotification('Selecione um molde e uma quantidade válida.', 'error');
+                }
+            });
+
+            planningItemList.addEventListener('click', e => {
+                if (e.target.classList.contains('remove-planning-item-btn')) {
+                    planningItems.splice(e.target.dataset.index, 1);
+                    renderPlanningItems();
+                    showNotification('Item removido!', 'info');
+                }
+            });
+
+            calculatePlanningBtn.addEventListener('click', () => {
+                // Coletar dados
+                const rollPrice = parseFloat(document.getElementById('cost-roll-price').value);
+                const rollLengthM = parseFloat(document.getElementById('cost-roll-length').value);
+                const rollIndex = planningRollSelect.value;
+                const profitMargin = parseFloat(document.getElementById('profit-margin').value) || 0;
+                const additionalCost = parseFloat(document.getElementById('additional-cost').value) || 0;
+
+                // Validações
+                if (rollIndex === '' || planningItems.length === 0) {
+                    showNotification('Selecione uma bobina e adicione itens à produção.', 'error');
+                    return;
+                }
+                if (!rollPrice || !rollLengthM || rollPrice <= 0 || rollLengthM <= 0) {
+                    showNotification('Preencha os dados de custo da bobina (valor e comprimento).', 'error');
+                    return;
+                }
+
+                const selectedRoll = appState.rolls[rollIndex];
+                const rollWidthM = selectedRoll.width / 100;
+
+                // Calcular custo por m² do papel
+                const totalSqmInRoll = rollWidthM * rollLengthM;
+                const paperCostPerSqm = rollPrice / totalSqmInRoll;
+
+                let totalLengthNeededM = 0;
+                let totalPieces = 0;
+                let hasError = false;
+                let itemDetails = [];
+
+                planningItems.forEach(item => {
+                    if (hasError) return;
+                    if (item.mold.width > selectedRoll.width) {
+                        showNotification(`Erro: O molde "${item.mold.name}" é mais largo que a bobina selecionada.`, 'error');
+                        hasError = true;
+                        return;
+                    }
+
+                    const totalMoldsForItem = item.qty * 2; // Dobra para frente e verso
+                    totalPieces += item.qty;
+
+                    const moldsAcross = Math.floor(selectedRoll.width / item.mold.width);
+                    const totalRows = Math.ceil(totalMoldsForItem / moldsAcross);
+                    const lengthForItem = (totalRows * item.mold.height) / 100;
+                    totalLengthNeededM += lengthForItem;
+
+                    itemDetails.push({
+                        ...item,
+                        moldsAcross,
+                        totalRows,
+                        lengthNeeded: lengthForItem,
+                        areaNeeded: lengthForItem * rollWidthM
+                    });
+                });
+
+                if (hasError) return;
+
+                const totalSqmNeeded = totalLengthNeededM * rollWidthM;
+                const totalPaperCost = totalSqmNeeded * paperCostPerSqm;
+                const totalCostWithAdditional = totalPaperCost + additionalCost;
+                const costPerPiece = totalPieces > 0 ? totalCostWithAdditional / totalPieces : 0;
+
+                // Calcular preço de venda com margem
+                const sellPricePerPiece = costPerPiece * (1 + profitMargin / 100);
+                const totalSellPrice = sellPricePerPiece * totalPieces;
+                const totalProfit = totalSellPrice - totalCostWithAdditional;
+
+                // Salvar dados do cálculo atual
+                currentProjectData = {
+                    projectName: document.getElementById('project-name').value || 'Projeto sem nome',
+                    projectDate: document.getElementById('project-date').value,
+                    roll: selectedRoll,
+                    rollPrice,
+                    rollLengthM,
+                    profitMargin,
+                    additionalCost,
+                    items: itemDetails,
+                    results: {
+                        paperCostPerSqm,
+                        totalLengthNeededM,
+                        totalSqmNeeded,
+                        totalPaperCost,
+                        totalCostWithAdditional,
+                        costPerPiece,
+                        sellPricePerPiece,
+                        totalSellPrice,
+                        totalProfit,
+                        totalPieces
+                    },
+                    calculatedAt: new Date().toISOString()
+                };
+
+                // Atualizar última calculação
+                appState.lastCalculation = new Date().toISOString();
+                saveState();
+
+                // Mostrar resultado
+                displayCalculationResult(currentProjectData);
+
+                // Mostrar botão de exportar PDF
+                exportPdfBtn.classList.remove('hidden');
+
+                showNotification('Cálculo realizado com sucesso!', 'success');
+            });
+
+            const displayCalculationResult = (data) => {
+                const results = data.results;
+
+                planningResultDiv.innerHTML = `
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-8 border-2 border-indigo-200 fade-in">
+                        <div class="text-center mb-6">
+                            <h3 class="font-bold text-2xl mb-2 text-gray-800">📊 Resultado: ${data.projectName}</h3>
+                            <p class="text-gray-600">${results.totalPieces.toLocaleString('pt-BR')} peças</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                                <p class="text-sm text-gray-500 font-medium">Custo do Papel/m²</p>
+                                <p class="font-bold text-xl text-blue-800">${results.paperCostPerSqm.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                                <p class="text-sm text-gray-500 font-medium">Papel Necessário</p>
+                                <p class="font-bold text-xl text-green-800">${results.totalLengthNeededM.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}m</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                                <p class="text-sm text-gray-500 font-medium">Custo Total</p>
+                                <p class="font-bold text-xl text-red-800">${results.totalCostWithAdditional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                                <p class="text-sm text-gray-500 font-medium">Custo por Peça</p>
+                                <p class="font-bold text-xl text-purple-800">${results.costPerPiece.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-lg shadow-lg">
+                                <p class="text-sm opacity-90 font-medium">Preço de Venda por Peça</p>
+                                <p class="font-bold text-2xl">${results.sellPricePerPiece.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                <p class="text-sm opacity-75">Margem: ${data.profitMargin}%</p>
+                            </div>
+                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6 rounded-lg shadow-lg">
+                                <p class="text-sm opacity-90 font-medium">Valor Total de Venda</p>
+                                <p class="font-bold text-2xl">${results.totalSellPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                <p class="text-sm opacity-75">${results.totalPieces} peças</p>
+                            </div>
+                            <div class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 rounded-lg shadow-lg">
+                                <p class="text-sm opacity-90 font-medium">Lucro Total</p>
+                                <p class="font-bold text-2xl">${results.totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                <p class="text-sm opacity-75">Líquido</p>
+                            </div>
+                        </div>
+
+                        <!-- Detalhamento por Item -->
+                        <div class="bg-white rounded-lg p-4 border">
+                            <h4 class="font-bold text-lg text-gray-700 mb-3">📋 Detalhamento por Item</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="text-left p-2 font-medium">Item</th>
+                                            <th class="text-center p-2 font-medium">Qtd</th>
+                                            <th class="text-center p-2 font-medium">Por Linha</th>
+                                            <th class="text-center p-2 font-medium">Linhas</th>
+                                            <th class="text-center p-2 font-medium">Comprimento</th>
+                                            <th class="text-center p-2 font-medium">Área</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${data.items.map(item => `
+                                            <tr class="border-t">
+                                                <td class="p-2 font-medium">${item.mold.name}</td>
+                                                <td class="text-center p-2">${item.qty}x</td>
+                                                <td class="text-center p-2">${item.moldsAcross}</td>
+                                                <td class="text-center p-2">${item.totalRows}</td>
+                                                <td class="text-center p-2">${item.lengthNeeded.toFixed(2)}m</td>
+                                                <td class="text-center p-2">${item.areaNeeded.toFixed(2)}m²</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                planningResultDiv.classList.remove('hidden');
+            };
+
+            // --- SALVAR PROJETO ---
+            saveProjectBtn.addEventListener('click', () => {
+                if (!currentProjectData) {
+                    showNotification('Realize um cálculo antes de salvar o projeto.', 'error');
+                    return;
+                }
+
+                const projectName = document.getElementById('project-name').value || 'Projeto sem nome';
+                const projectToSave = {
+                    ...currentProjectData,
+                    projectName,
+                    id: Date.now().toString(),
+                    savedAt: new Date().toISOString()
+                };
+
+                appState.projects.push(projectToSave);
+                saveState();
+                renderSavedProjects();
+                updateDashboard();
+
+                showNotification('Projeto salvo com sucesso!', 'success');
+            });
+
+            // --- EXPORTAR PDF ---
+            exportPdfBtn.addEventListener('click', () => {
+                if (!currentProjectData) {
+                    showNotification('Nenhum cálculo disponível para exportar.', 'error');
+                    return;
+                }
+
+                generatePDF(currentProjectData);
+            });
+
+            const generatePDF = (data) => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Cabeçalho
+                doc.setFontSize(20);
+                doc.setFont(undefined, 'bold');
+                doc.text('RELATÓRIO DE PRODUÇÃO - SUBLIMAÇÃO', 20, 20);
+
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Projeto: ${data.projectName}`, 20, 35);
+                doc.text(`Data: ${new Date(data.calculatedAt).toLocaleDateString('pt-BR')}`, 20, 45);
+                doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`, 20, 55);
+
+                // Linha separadora
+                doc.line(20, 65, 190, 65);
+
+                // Dados da bobina
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text('DADOS DA BOBINA', 20, 80);
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Tipo: ${data.roll.name} (${data.roll.width}cm)`, 25, 95);
+                doc.text(`Valor: ${data.rollPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, 105);
+                doc.text(`Comprimento: ${data.rollLengthM}m`, 25, 115);
+
+                // Resultados
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text('RESULTADOS DO CÁLCULO', 20, 135);
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'normal');
+
+                const results = data.results;
+                let y = 150; doc.text(`• Total de peças: ${results.totalPieces}`, 25, y);
+                doc.text(`• Papel necessário: ${results.totalLengthNeededM.toFixed(2)}m (${results.totalSqmNeeded.toFixed(2)}m²)`, 25, y + 10);
+                doc.text(`• Custo do papel: ${results.totalPaperCost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y + 20);
+                doc.text(`• Custos adicionais: ${data.additionalCost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y + 30);
+                doc.text(`• Custo total: ${results.totalCostWithAdditional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y + 40);
+                doc.text(`• Custo por peça: ${results.costPerPiece.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y + 50);
+
+                y += 70;
+                doc.setFont(undefined, 'bold');
+                doc.text(`• Margem de lucro: ${data.profitMargin}%`, 25, y);
+                doc.text(`• Preço de venda por peça: ${results.sellPricePerPiece.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y + 10);
+                doc.text(`• Valor total de venda: ${results.totalSellPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y + 20);
+                doc.text(`• Lucro total: ${results.totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 25, y + 30);
+
+                // Nova página para detalhes dos itens
+                doc.addPage();
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text('DETALHAMENTO POR ITEM', 20, 20);
+
+                y = 35;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+
+                data.items.forEach((item, index) => {
+                    if (y > 250) {
+                        doc.addPage();
+                        y = 20;
+                    }
+
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`${index + 1}. ${item.mold.name}`, 20, y);
+                    doc.setFont(undefined, 'normal');
+                    doc.text(`   Quantidade: ${item.qty} peças (${item.qty * 2} impressões)`, 25, y + 10);
+                    doc.text(`   Dimensões: ${item.mold.width}cm × ${item.mold.height}cm`, 25, y + 20);
+                    doc.text(`   Por linha: ${item.moldsAcross} moldes`, 25, y + 30);
+                    doc.text(`   Total de linhas: ${item.totalRows}`, 25, y + 40);
+                    doc.text(`   Comprimento necessário: ${item.lengthNeeded.toFixed(2)}m`, 25, y + 50);
+                    doc.text(`   Área necessária: ${item.areaNeeded.toFixed(2)}m²`, 25, y + 60);
+
+                    y += 75;
+                });
+
+                // Salvar o PDF
+                const fileName = `relatorio_${data.projectName.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(fileName);
+
+                showNotification('PDF exportado com sucesso!', 'success');
+            };
+
+            // --- PROJETOS SALVOS ---
+            const savedProjectsList = document.getElementById('saved-projects-list');
+            const clearProjectsBtn = document.getElementById('clear-projects-btn');
+
+            const renderSavedProjects = () => {
+                savedProjectsList.innerHTML = '';
+
+                if (appState.projects.length === 0) {
+                    savedProjectsList.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <div class="text-gray-400 text-6xl mb-4">📋</div>
+                            <p class="text-gray-500 text-lg">Nenhum projeto salvo ainda</p>
+                            <p class="text-gray-400 text-sm">Faça um cálculo e salve seu primeiro projeto!</p>
+                        </div>
+                    `;
+                } else {
+                    appState.projects.reverse().forEach((project, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'bg-white border rounded-lg p-6 card-hover';
+                        div.innerHTML = `
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="font-bold text-lg text-gray-800">${project.projectName}</h4>
+                                <div class="flex gap-2">
+                                    <button onclick="viewProject(${appState.projects.length - 1 - index})" class="text-blue-500 hover:text-blue-700 text-sm">👁️</button>
+                                    <button onclick="exportProject(${appState.projects.length - 1 - index})" class="text-green-500 hover:text-green-700 text-sm">📄</button>
+                                    <button onclick="deleteProject(${appState.projects.length - 1 - index})" class="text-red-500 hover:text-red-700 text-sm">🗑️</button>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm text-gray-600">
+                                <p><strong>Peças:</strong> ${project.results.totalPieces}</p>
+                                <p><strong>Valor de Venda:</strong> ${project.results.totalSellPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                <p><strong>Lucro:</strong> ${project.results.totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                <p><strong>Criado em:</strong> ${new Date(project.savedAt).toLocaleDateString('pt-BR')}</p>
+                            </div>
+                        `;
+                        savedProjectsList.appendChild(div);
+                    });
+                }
+            };
+
+            // Funções globais para os projetos salvos
+            window.viewProject = (index) => {
+                currentProjectData = appState.projects[index];
+                displayCalculationResult(currentProjectData);
+
+                // Mudar para a aba de planejamento
+                document.querySelector('[data-tab="planning"]').click();
+
+                // Scroll para o resultado
+                setTimeout(() => {
+                    planningResultDiv.scrollIntoView({ behavior: 'smooth' });
+                }, 300);
+            };
+
+            window.exportProject = (index) => {
+                generatePDF(appState.projects[index]);
+            };
+
+            window.deleteProject = (index) => {
+                if (confirm('Tem certeza que deseja excluir este projeto?')) {
+                    appState.projects.splice(index, 1);
+                    saveState();
+                    renderSavedProjects();
+                    updateDashboard();
+                    showNotification('Projeto excluído!', 'info');
+                }
+            };
+
+            clearProjectsBtn.addEventListener('click', () => {
+                if (confirm('Tem certeza que deseja excluir TODOS os projetos? Esta ação não pode ser desfeita.')) {
+                    appState.projects = [];
+                    saveState();
+                    renderSavedProjects();
+                    updateDashboard();
+                    showNotification('Todos os projetos foram excluídos!', 'info');
+                }
+            });
+
+            // --- ANÁLISES ---
+            const updateAnalytics = () => {
+                const totalProjects = appState.projects.length;
+                const totalValue = appState.projects.reduce((sum, p) => sum + p.results.totalSellPrice, 0);
+                const totalPieces = appState.projects.reduce((sum, p) => sum + p.results.totalPieces, 0);
+                const avgTicket = totalProjects > 0 ? totalValue / totalProjects : 0;
+
+                document.getElementById('stats-total-projects').textContent = totalProjects;
+                document.getElementById('stats-total-value').textContent = totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('stats-total-pieces').textContent = totalPieces.toLocaleString('pt-BR');
+                document.getElementById('stats-avg-ticket').textContent = avgTicket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                // Gráfico de evolução de projetos
+                updateProjectsChart();
+
+                // Gráfico de moldes mais usados
+                updateMoldsChart();
+            };
+
+            const updateProjectsChart = () => {
+                const ctx = document.getElementById('projects-chart').getContext('2d');
+
+                // Agrupar projetos por mês
+                const monthlyData = {};
+                appState.projects.forEach(project => {
+                    const month = new Date(project.savedAt).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+                    monthlyData[month] = (monthlyData[month] || 0) + 1;
+                });
+
+                const labels = Object.keys(monthlyData).slice(-6); // Últimos 6 meses
+                const data = labels.map(label => monthlyData[label] || 0);
+
+                if (window.projectsChart) {
+                    window.projectsChart.destroy();
+                }
+
+                window.projectsChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Projetos por Mês',
+                            data: data,
+                            borderColor: 'rgb(99, 102, 241)',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            const updateMoldsChart = () => {
+                const ctx = document.getElementById('molds-chart').getContext('2d');
+
+                // Contar uso de moldes
+                const moldUsage = {};
+                appState.projects.forEach(project => {
+                    project.items.forEach(item => {
+                        moldUsage[item.mold.name] = (moldUsage[item.mold.name] || 0) + item.qty;
+                    });
+                });
+
+                const labels = Object.keys(moldUsage).slice(0, 5); // Top 5
+                const data = labels.map(label => moldUsage[label]);
+
+                if (window.moldsChart) {
+                    window.moldsChart.destroy();
+                }
+
+                window.moldsChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.8)',
+                                'rgba(54, 162, 235, 0.8)',
+                                'rgba(255, 205, 86, 0.8)',
+                                'rgba(75, 192, 192, 0.8)',
+                                'rgba(153, 102, 255, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            };
+
+            // --- SISTEMA DE NOTIFICAÇÕES ---
+            const showNotification = (message, type = 'info') => {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 text-white font-medium max-w-sm ${type === 'success' ? 'bg-green-500' :
+                    type === 'error' ? 'bg-red-500' :
+                        type === 'info' ? 'bg-blue-500' : 'bg-gray-500'
+                    }`;
+                notification.textContent = message;
+
+                document.body.appendChild(notification);
+
+                // Animação de entrada
+                notification.style.transform = 'translateX(100%)';
+                notification.style.transition = 'transform 0.3s ease-out';
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 10);
+
+                // Remover após 3 segundos
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            };
+
+            // --- INICIALIZAÇÃO ---
+            loadState();
+            renderMolds();
+            renderRolls();
+            renderPlanningItems();
+            renderSavedProjects();
+            updateDashboard();
+        });
+    </script>
+</body>
+
+</html>

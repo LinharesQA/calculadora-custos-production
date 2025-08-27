@@ -1,0 +1,1175 @@
+<!DOCTYPE h <!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Google OAuth -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<!-- TailwindCSS -->ml>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SublimaCalc - Calculadora de Custos para Sublimação</title>
+    <meta name="description"
+        content="Plataforma profissional para cálculo preciso de custos de sublimação com otimização e relatórios detalhados">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                            950: '#1e1b4b',
+                        },
+                        secondary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                            950: '#052e16',
+                        },
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'slide-down': 'slideDown 0.5s ease-out',
+                        'scale-in': 'scaleIn 0.3s ease-out',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'gradient-shift': 'gradientShift 8s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        scaleIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.9)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        gradientShift: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' }
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)' },
+                            '100%': { boxShadow: '0 0 40px rgba(99, 102, 241, 0.6)' }
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+                        'tech-grid': "url(\"data:image/svg+xml,%3csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%23334155' fill-opacity='0.1'%3e%3ccircle cx='30' cy='30' r='1'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e\")",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient-animated {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tech-border {
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+            height: 1px;
+        }
+
+        .hover-glow:hover {
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px rgba(99, 102, 241, 0.8),
+                0 0 20px rgba(99, 102, 241, 0.6),
+                0 0 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .parallax-element {
+            will-change: transform;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .floating,
+            .animate-float,
+            .animate-pulse-slow,
+            .animate-gradient-shift {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-dark-950 text-white font-inter">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-dark-950 z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="relative">
+                <div
+                    class="w-20 h-20 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin mx-auto mb-4">
+                </div>
+                <div
+                    class="absolute inset-0 w-20 h-20 border-4 border-transparent border-r-secondary-500 rounded-full animate-spin animation-delay-75 mx-auto">
+                </div>
+            </div>
+            <h2 class="text-xl font-semibold text-gradient mb-2">SublimaCalc</h2>
+            <p class="text-dark-400 font-mono text-sm">Inicializando sistema...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 glass-dark transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-calculator text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gradient">SublimaCalc</h1>
+                        <p class="text-xs text-dark-400 font-mono">v2.0 Pro</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-dark-300 hover:text-white transition-colors duration-200">Início</a>
+                    <a href="#features"
+                        class="text-dark-300 hover:text-white transition-colors duration-200">Recursos</a>
+                    <a href="#contact" class="text-dark-300 hover:text-white transition-colors duration-200">Contato</a>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="hidden md:flex items-center">
+                    <button onclick="showLoginModal()"
+                        class="px-6 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg font-semibold hover-glow transition-all duration-300">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Entrar
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden glass-dark">
+            <div class="px-6 py-4 space-y-4">
+                <a href="#home" class="block text-dark-300 hover:text-white transition-colors duration-200">Início</a>
+                <a href="#features"
+                    class="block text-dark-300 hover:text-white transition-colors duration-200">Recursos</a>
+                <a href="#contact"
+                    class="block text-dark-300 hover:text-white transition-colors duration-200">Contato</a>
+                <div class="pt-4 border-t border-dark-700">
+                    <button onclick="showLoginModal()"
+                        class="block w-full mt-2 px-6 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg font-semibold text-center hover-glow transition-all duration-300">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Entrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center bg-gradient-animated">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 bg-tech-grid opacity-20"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-dark-950/90 via-dark-900/70 to-transparent"></div>
+
+        <!-- Floating Elements -->
+        <div class="absolute top-32 left-10 w-4 h-4 bg-primary-500 rounded-full floating opacity-60"></div>
+        <div
+            class="absolute top-52 right-20 w-6 h-6 bg-secondary-500 rounded-full floating animation-delay-1000 opacity-40">
+        </div>
+        <div
+            class="absolute bottom-40 left-20 w-3 h-3 bg-primary-400 rounded-full floating animation-delay-2000 opacity-80">
+        </div>
+
+        <div class="relative z-10 text-center max-w-6xl mx-auto px-6 mt-16">
+            <!-- Main Heading -->
+            <div class="mb-8 animate-slide-up">
+                <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight">
+                    <span class="text-gradient neon-text">Revolução</span><br>
+                    <span class="text-white">em Cálculo de</span><br>
+                    <span class="text-gradient neon-text">Custos</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-dark-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    Plataforma profissional para <strong class="text-primary-400">cálculo preciso</strong> de custos de
+                    sublimação.
+                    <span class="text-secondary-400">Otimização em tempo real</span> e
+                    relatórios profissionais.
+                </p>
+            </div>
+
+            <!-- Feature Highlights -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-slide-up animation-delay-300">
+                <div class="glass rounded-xl p-6 hover-glow">
+                    <i class="fas fa-calculator text-3xl text-primary-400 mb-4"></i>
+                    <h3 class="text-lg font-semibold mb-2">Cálculo Preciso</h3>
+                    <p class="text-dark-400 text-sm">Cálculos profissionais de custos de sublimação com alta precisão
+                    </p>
+                </div>
+                <div class="glass rounded-xl p-6 hover-glow">
+                    <i class="fas fa-bolt text-3xl text-secondary-400 mb-4"></i>
+                    <h3 class="text-lg font-semibold mb-2">Tempo Real</h3>
+                    <p class="text-dark-400 text-sm">Cálculos instantâneos com atualização automática de preços</p>
+                </div>
+                <div class="glass rounded-xl p-6 hover-glow">
+                    <i class="fas fa-chart-line text-3xl text-purple-400 mb-4"></i>
+                    <h3 class="text-lg font-semibold mb-2">Relatórios Pro</h3>
+                    <p class="text-dark-400 text-sm">Relatórios profissionais e análise detalhada de custos</p>
+                </div>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="flex justify-center items-center animate-slide-up animation-delay-600">
+                <button onclick="showLoginModal()"
+                    class="group relative px-8 py-4 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl font-bold text-lg hover-glow transition-all duration-300 transform hover:scale-105">
+                    <span class="relative z-10"><i class="fas fa-sign-in-alt mr-2"></i> Entrar na Plataforma</span>
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    </div>
+                </button>
+            </div>
+
+            <!-- Trust Indicators -->
+            <div class="mt-16 animate-slide-up animation-delay-900">
+                <p class="text-dark-500 text-sm mb-6">Ferramenta profissional para sublimação</p>
+                <div class="flex flex-wrap justify-center items-center gap-8 opacity-60">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-calculator text-primary-400"></i>
+                        <span class="font-mono text-sm">Precisão</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-bolt text-secondary-400"></i>
+                        <span class="font-mono text-sm">Rapidez</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-chart-line text-purple-400"></i>
+                        <span class="font-mono text-sm">Relatórios</span>
+                    </div>
+                    <i class="fas fa-lock text-blue-400"></i>
+                    <span class="font-mono text-sm">256-bit SSL</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-cloud text-purple-400"></i>
+                    <span class="font-mono text-sm">99.9% Uptime</span>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-pulse">
+            <div class="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+                <div class="w-1 h-3 bg-white/60 rounded-full mt-2 animate-pulse"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-dark-900 relative">
+        <div class="absolute inset-0 bg-tech-grid opacity-5"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <!-- Section Header -->
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">
+                    <span class="text-gradient">Recursos</span> Avançados
+                </h2>
+                <p class="text-xl text-dark-400 max-w-3xl mx-auto">
+                    Tecnologia de ponta para revolucionar seu processo de cálculo de custos
+                </p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Feature 1 -->
+                <div class="glass-dark rounded-xl p-8 hover-glow group">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-calculator text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Cálculo de Custos</h3>
+                    <p class="text-dark-400 mb-4">Calcule custos precisos de sublimação com base em materiais, moldes e
+                        quantidades.</p>
+                    <ul class="text-sm text-dark-500 space-y-1">
+                        <li>• Cálculo por projeto</li>
+                        <li>• Gestão de moldes</li>
+                        <li>• Margem de lucro</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-dark rounded-xl p-8 hover-glow group">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-secondary-500 to-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-save text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Salvamento de Projetos</h3>
+                    <p class="text-dark-400 mb-4">Salve e gerencie todos os seus projetos com histórico completo de
+                        cálculos.</p>
+                    <ul class="text-sm text-dark-500 space-y-1">
+                        <li>• Histórico de projetos</li>
+                        <li>• Edição e duplicação</li>
+                        <li>• Organização por categorias</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-dark rounded-xl p-8 hover-glow group">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-chart-line text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Relatórios e Gráficos</h3>
+                    <p class="text-dark-400 mb-4">Visualize suas análises de custos com gráficos interativos e
+                        relatórios detalhados.</p>
+                    <ul class="text-sm text-dark-500 space-y-1">
+                        <li>• Gráficos de custos</li>
+                        <li>• Análise de lucratividade</li>
+                        <li>• Comparação de projetos</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="glass-dark rounded-xl p-8 hover-glow group">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-mobile-alt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Interface Responsiva</h3>
+                    <p class="text-dark-400 mb-4">Acesse de qualquer dispositivo com interface otimizada para mobile e
+                        desktop.</p>
+                    <ul class="text-sm text-dark-500 space-y-1">
+                        <li>• Design responsivo</li>
+                        <li>• Funciona em qualquer tela</li>
+                        <li>• Interface intuitiva</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="glass-dark rounded-xl p-8 hover-glow group">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-shield-alt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Armazenamento Local</h3>
+                    <p class="text-dark-400 mb-4">Seus dados são salvos localmente no navegador com segurança e
+                        privacidade total.</p>
+                    <ul class="text-sm text-dark-500 space-y-1">
+                        <li>• Dados privados</li>
+                        <li>• Sem necessidade de internet</li>
+                        <li>• Backup automático</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="glass-dark rounded-xl p-8 hover-glow group">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-file-pdf text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Relatórios em PDF</h3>
+                    <p class="text-dark-400 mb-4">Gere relatórios profissionais dos seus projetos em formato PDF.</p>
+                    <ul class="text-sm text-dark-500 space-y-1">
+                        <li>• Relatórios em PDF</li>
+                        <li>• Dados detalhados</li>
+                        <li>• Design profissional</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 7 -->
+                <div class="glass-dark rounded-xl p-8 hover-glow group">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-shapes text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Gestão de Moldes</h3>
+                    <p class="text-dark-400 mb-4">Cadastre e gerencie todos os seus moldes e bobinas de forma
+                        organizada.</p>
+                    <ul class="text-sm text-dark-500 space-y-1">
+                        <li>• Cadastro de moldes</li>
+                        <li>• Gestão de bobinas</li>
+                        <li>• Dimensões precisas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="login-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="glass-dark rounded-2xl p-8 w-full max-w-md animate-scale-in">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gradient mb-2">Bem-vindo de volta!</h2>
+                <p class="text-dark-400">Entre na sua conta para continuar</p>
+            </div>
+
+            <form id="login-form" class="space-y-6">
+                <!-- Google Sign-In Button -->
+                <button onclick="redirectToGoogleAuth()" type="button"
+                    class="w-full flex justify-center items-center px-4 py-3 border border-dark-600 rounded-lg bg-white text-dark-900 font-semibold hover:bg-gray-50 transition-colors">
+                    <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    Entrar com Google
+                </button>
+
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-dark-600"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-dark-900 text-dark-400">ou continue com email</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-dark-300 mb-2">Email</label>
+                    <input type="email" required
+                        class="w-full px-4 py-3 bg-dark-800 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-white">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-dark-300 mb-2">Senha</label>
+                    <input type="password" required
+                        class="w-full px-4 py-3 bg-dark-800 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-white">
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox"
+                            class="w-4 h-4 text-primary-500 bg-dark-800 border-dark-600 rounded focus:ring-primary-500">
+                        <span class="ml-2 text-sm text-dark-400">Lembrar-me</span>
+                    </label>
+                    <a href="#" class="text-sm text-primary-400 hover:text-primary-300">Esqueci a senha</a>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-3 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg font-semibold hover-glow transition-all duration-300">
+                    Entrar
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-dark-400 text-sm">Não tem uma conta?
+                    <a href="#" onclick="showRegisterModal(); hideLoginModal();"
+                        class="text-primary-400 hover:text-primary-300">Criar conta</a>
+                </p>
+            </div>
+
+            <button onclick="hideLoginModal()" class="absolute top-4 right-4 text-dark-400 hover:text-white">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="glass-dark rounded-2xl p-8 w-full max-w-md animate-scale-in">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gradient mb-2">Criar conta</h2>
+                <p class="text-dark-400">Comece gratuitamente hoje mesmo</p>
+            </div>
+
+            <form id="register-form" class="space-y-6">
+                <!-- Google Sign-Up Button -->
+                <button type="button" onclick="handleGoogleSignUp()"
+                    class="w-full flex items-center justify-center space-x-3 py-3 px-4 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200 border border-gray-300">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    <span>Continuar com Google</span>
+                </button>
+
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-dark-600"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-dark-900 text-dark-400">ou crie com email</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-dark-300 mb-2">Nome completo</label>
+                    <input type="text" required
+                        class="w-full px-4 py-3 bg-dark-800 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-white">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-dark-300 mb-2">Email</label>
+                    <input type="email" required
+                        class="w-full px-4 py-3 bg-dark-800 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-white">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-dark-300 mb-2">Senha</label>
+                    <input type="password" required
+                        class="w-full px-4 py-3 bg-dark-800 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-white">
+                </div>
+
+                <div>
+                    <label class="flex items-center">
+                        <input type="checkbox" required
+                            class="w-4 h-4 text-primary-500 bg-dark-800 border-dark-600 rounded focus:ring-primary-500">
+                        <span class="ml-2 text-sm text-dark-400">Concordo com os <a href="#"
+                                class="text-primary-400 hover:text-primary-300">Termos de Uso</a></span>
+                    </label>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-3 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg font-semibold hover-glow transition-all duration-300">
+                    Criar conta gratuita
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-dark-400 text-sm">Já tem uma conta?
+                    <a href="#" onclick="showLoginModal(); hideRegisterModal();"
+                        class="text-primary-400 hover:text-primary-300">Fazer login</a>
+                </p>
+            </div>
+
+            <button onclick="hideRegisterModal()" class="absolute top-4 right-4 text-dark-400 hover:text-white">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-dark-950 relative">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    <span class="text-gradient">Entre em Contato</span>
+                </h2>
+                <p class="text-xl text-dark-300 max-w-3xl mx-auto">
+                    Precisa de ajuda ou tem alguma dúvida? Entre em contato conosco!
+                </p>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Contact Info -->
+                    <div class="space-y-8">
+                        <div class="glass rounded-xl p-6">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div
+                                    class="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-envelope text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Email</h3>
+                                    <p class="text-dark-400">linharesphillipe94@gmail.com</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass rounded-xl p-6">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div
+                                    class="w-12 h-12 bg-gradient-to-br from-secondary-500 to-purple-500 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-phone text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Telefone - Phillipe Linhares</h3>
+                                    <p class="text-dark-400">(98) 98451-8929</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="glass rounded-xl p-8">
+                        <form class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-dark-300 mb-2">Nome</label>
+                                <input type="text"
+                                    class="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-white placeholder-dark-500"
+                                    placeholder="Seu nome completo">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-dark-300 mb-2">Email</label>
+                                <input type="email"
+                                    class="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-white placeholder-dark-500"
+                                    placeholder="seu@email.com">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-dark-300 mb-2">Mensagem</label>
+                                <textarea rows="4"
+                                    class="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-white placeholder-dark-500"
+                                    placeholder="Como podemos ajudar?"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg font-semibold hover-glow transition-all duration-300">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Enviar Mensagem
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-950 py-12 border-t border-dark-800">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-3 mb-6">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-calculator text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-gradient">SublimaCalc</span>
+                </div>
+                <p class="text-dark-400 text-lg mb-8 max-w-2xl mx-auto">
+                    A plataforma profissional para cálculo de custos de sublimação.
+                </p>
+
+                <div class="border-t border-dark-800 pt-8">
+                    <p class="text-dark-500 text-sm">
+                        © 2025 SublimaCalc. Todos os direitos reservados.
+                        <span class="text-primary-400">Feito com ❤️ no Brasil</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Loading Screen
+        window.addEventListener('load', function () {
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.display = 'none';
+                }, 300);
+            }, 1500);
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar Scroll Effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                navbar.classList.add('backdrop-blur-lg', 'bg-dark-900/80');
+            } else {
+                navbar.classList.remove('backdrop-blur-lg', 'bg-dark-900/80');
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Modal Functions
+        function showLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+            document.getElementById('login-modal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('login-modal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showRegisterModal() {
+            document.getElementById('register-modal').classList.remove('hidden');
+            document.getElementById('register-modal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideRegisterModal() {
+            document.getElementById('register-modal').classList.add('hidden');
+            document.getElementById('register-modal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Google Authentication Functions
+        function redirectToGoogleAuth() {
+            // Redireciona diretamente para o backend OAuth
+            window.location.href = 'http://localhost:3001/api/auth/google';
+        }
+
+        // Check if user is returning from OAuth with token
+        function checkOAuthReturn() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const error = urlParams.get('error');
+
+            if (error) {
+                console.error('OAuth error:', error);
+                showNotification('Erro na autenticação. Tente novamente.', 'error');
+                return;
+            }
+
+            if (token) {
+                // Store the JWT token
+                localStorage.setItem('authToken', token);
+
+                // Decode and store user info
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const userData = {
+                        id: payload.userId,
+                        name: payload.name,
+                        email: payload.email,
+                        picture: payload.picture,
+                        provider: 'google',
+                        loginTime: new Date().toISOString()
+                    };
+
+                    // Try to get user data from URL params as fallback
+                    const userParam = urlParams.get('user');
+                    if (userParam) {
+                        try {
+                            const userFromParam = JSON.parse(decodeURIComponent(userParam));
+                            userData.name = userFromParam.name || userData.name;
+                            userData.picture = userFromParam.avatar || userData.picture;
+                        } catch (parseError) {
+                            console.warn('Could not parse user parameter:', parseError);
+                        }
+                    }
+
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    localStorage.setItem('isLoggedIn', 'true');
+
+                    // Show success message
+                    showNotification('Login realizado com sucesso!', 'success');
+
+                    // Clean URL
+                    window.history.replaceState({}, document.title, '/');
+
+                    // Redirect to app dashboard
+                    setTimeout(() => {
+                        window.location.href = 'app.html';
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error processing token:', error);
+                    showNotification('Erro ao processar login', 'error');
+                }
+            }
+        }
+
+        function handleGoogleSignIn(response) {
+            console.log('Google Sign-In response:', response);
+
+            // Decode the JWT token to get user information
+            const credential = response.credential;
+            const payload = JSON.parse(atob(credential.split('.')[1]));
+
+            console.log('User info:', payload);
+
+            // Store user information
+            const userData = {
+                id: payload.sub,
+                name: payload.name,
+                email: payload.email,
+                picture: payload.picture,
+                provider: 'google',
+                loginTime: new Date().toISOString()
+            };
+
+            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('isLoggedIn', 'true');
+
+            // Show success message
+            showNotification('Login realizado com sucesso!', 'success');
+
+            // Redirect to app
+            setTimeout(() => {
+                window.location.href = 'app.html';
+            }, 1000);
+        }
+
+        function handleGoogleSignUp() {
+            // Initialize Google Sign-In for registration
+            window.google.accounts.id.initialize({
+                client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+                callback: handleGoogleSignUpResponse
+            });
+
+            window.google.accounts.id.prompt();
+        }
+
+        function handleGoogleSignUpResponse(response) {
+            console.log('Google Sign-Up response:', response);
+
+            // Decode the JWT token to get user information
+            const credential = response.credential;
+            const payload = JSON.parse(atob(credential.split('.')[1]));
+
+            console.log('New user info:', payload);
+
+            // Store user information
+            const userData = {
+                id: payload.sub,
+                name: payload.name,
+                email: payload.email,
+                picture: payload.picture,
+                provider: 'google',
+                registrationTime: new Date().toISOString(),
+                loginTime: new Date().toISOString()
+            };
+
+            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('isLoggedIn', 'true');
+
+            // Show success message
+            showNotification('Conta criada com sucesso!', 'success');
+
+            // Redirect to app
+            setTimeout(() => {
+                window.location.href = 'app.html';
+            }, 1000);
+        }
+
+        // Notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
+
+            if (type === 'success') {
+                notification.classList.add('bg-green-600', 'text-white');
+            } else if (type === 'error') {
+                notification.classList.add('bg-red-600', 'text-white');
+            } else {
+                notification.classList.add('bg-blue-600', 'text-white');
+            }
+
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Demo Function
+        function showDemo() {
+            // Redirect to calculator
+            window.location.href = 'app.html';
+        }
+
+        // Counter Animation
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current).toLocaleString();
+            }, 20);
+        }
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Counter animation
+                    const counter = entry.target.querySelector('[data-counter]');
+                    if (counter && !counter.classList.contains('animated')) {
+                        counter.classList.add('animated');
+                        const target = parseInt(counter.dataset.counter);
+                        animateCounter(counter, target);
+                    }
+
+                    // Add animation classes
+                    entry.target.classList.add('animate-slide-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedElements = document.querySelectorAll('.animate-scale-in');
+            animatedElements.forEach(el => observer.observe(el.parentElement));
+
+            // Check if returning from OAuth
+            checkOAuthReturn();
+        });
+
+        // Form Submissions
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Entrando...';
+            submitBtn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                // Redirect to app
+                window.location.href = 'app.html';
+            }, 1500);
+        });
+
+        document.getElementById('register-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Criando conta...';
+            submitBtn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                // Redirect to app
+                window.location.href = 'app.html';
+            }, 1500);
+        });
+
+        // Close modals on escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                hideLoginModal();
+                hideRegisterModal();
+            }
+        });
+
+        // Close modals on backdrop click
+        document.getElementById('login-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                hideLoginModal();
+            }
+        });
+
+        document.getElementById('register-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                hideRegisterModal();
+            }
+        });
+
+        // Parallax Effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.parallax-element');
+
+            parallaxElements.forEach(element => {
+                const speed = element.dataset.speed || 0.5;
+                const yPos = -(scrolled * speed);
+                element.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+
+        // Add subtle animations on hover
+        document.querySelectorAll('.hover-glow').forEach(element => {
+            element.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+
+            element.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Typed effect for hero text (optional enhancement)
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+
+            function typing() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typing, speed);
+                }
+            }
+
+            typing();
+        }
+
+        // Performance optimization - Lazy load animations
+        const lazyAnimations = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                    lazyAnimations.unobserve(entry.target);
+                }
+            });
+        });
+
+        // Initialize lazy animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const lazyElements = document.querySelectorAll('[data-animate]');
+            lazyElements.forEach(el => lazyAnimations.observe(el));
+        });
+    </script>
+</body>
+
+</html>

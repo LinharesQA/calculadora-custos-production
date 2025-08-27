@@ -8,7 +8,7 @@
     "backend": "node backend/server.js",
     "frontend": "echo 'Frontend servido via backend'",
     "build": "npm run build:frontend",
-    "build:frontend": "echo 'Frontend build completed - static files ready'",
+    "build:frontend": "node -e \"const fs=require('fs');const path=require('path');if(!fs.existsSync('dist'))fs.mkdirSync('dist');const copyRecursive=(src,dest)=>{const stats=fs.statSync(src);if(stats.isDirectory()){if(!fs.existsSync(dest))fs.mkdirSync(dest);fs.readdirSync(src).forEach(file=>copyRecursive(path.join(src,file),path.join(dest,file)));}else{fs.copyFileSync(src,dest);}};copyRecursive('frontend','dist');console.log('✅ Frontend build completed - files copied to dist/')\"",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "nodemon backend/server.js",
     "dev:frontend": "echo 'Frontend em modo desenvolvimento'"

@@ -61,7 +61,7 @@ Thumbs.db
 # Deploy files
 *.zip
 temp-deploy/
-dist/
+# dist/  # Comentado para permitir versionamento do frontend
 
 # Build artifacts  
 build/
