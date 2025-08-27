@@ -4,7 +4,7 @@
   "description": "Sistema completo de cálculo de custos para sublimação",
   "main": "backend/server.js",
   "scripts": {
-    "start": "echo 'Frontend estático - arquivos servidos via HTTP'",
+    "start": "npx serve dist -p $PORT",
     "start:backend": "node backend/server.js",
     "backend": "node backend/server.js",
     "frontend": "echo 'Frontend servido via backend'",
@@ -15,6 +15,7 @@
     "dev:frontend": "echo 'Frontend em modo desenvolvimento'"
   },
   "dependencies": {
+    "serve": "^14.2.1",
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "helmet": "^7.1.0",
