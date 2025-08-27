@@ -1,0 +1,23 @@
+{
+    "name": "calculadora-custos-backend",
+    "version": "1.0.0",
+    "description": "Backend para calculadora de custos de sublimação",
+    "main": "backend-auth/server.js",
+    "scripts": {
+        "start": "cd backend-auth && npm start",
+        "build": "cd backend-auth && npm install",
+        "dev": "cd backend-auth && npm run dev",
+        "setup": "cd backend-auth && npm install && npm run setup-db"
+    },
+    "keywords": [
+        "backend",
+        "calculadora",
+        "sublimacao"
+    ],
+    "author": "Phillipe Linhares",
+    "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+    }
+}

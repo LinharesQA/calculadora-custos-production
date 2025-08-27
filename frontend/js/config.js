@@ -3,7 +3,7 @@ window.APP_CONFIG = {
     // URLs dos serviços
     BACKEND_URLS: {
         development: 'http://localhost:3001/api',
-        production: 'https://evo-api-calculadora-db.usg3xn.easypanel.host/api'
+        production: 'https://evo-api-calculadora-backend.usg3xn.easypanel.host/api'
     },
 
     // Detecção automática do ambiente

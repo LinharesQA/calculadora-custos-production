@@ -27,7 +27,7 @@ function createSequelizeInstance() {
             },
             dialectOptions: {
                 ssl: nodeEnv === 'production' ? {
-                    require: true,
+                    require: false,  // EasyPanel não requer SSL
                     rejectUnauthorized: false
                 } : false
             }
