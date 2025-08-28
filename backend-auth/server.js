@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const passport = require('passport');
+const session = require('express-session');
 
 // Performance middleware
 const { compressionMiddleware, basicLimit } = require('./middleware/performance');
@@ -17,6 +18,7 @@ require('dotenv').config({ path: path.join(__dirname, envFile) });
 require('./config/passport');
 const { sequelize } = require('./config/database');
 const dbPool = require('./services/databasePool');
+const redisSession = require('./services/redisSession');
 
 // Importar rotas
 const authRoutes = require('./routes/auth');
@@ -75,7 +77,34 @@ app.use(cors({
 // Middlewares básicos
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Configurar sessões (deve vir antes do passport)
+async function setupSessions() {
+    try {
+        // Inicializar Redis para sessões
+        await redisSession.createConnection();
+
+        // Configurar sessões com Redis ou MemoryStore
+        const sessionConfig = redisSession.getSessionConfig();
+        app.use(session(sessionConfig));
+
+        console.log('✅ Sessions: Configuração aplicada');
+    } catch (error) {
+        console.error('❌ Erro ao configurar sessões:', error.message);
+        // Fallback para sessões em memória
+        app.use(session({
+            name: 'sublimacalc_session',
+            secret: process.env.SESSION_SECRET || 'dev-secret-fallback',
+            resave: false,
+            saveUninitialized: false,
+            cookie: { maxAge: 24 * 60 * 60 * 1000 }
+        }));
+        console.log('⚠️ Sessions: Usando fallback MemoryStore');
+    }
+}
+
 app.use(passport.initialize());
+app.use(passport.session());
 
 // Health check
 app.get('/health', (req, res) => {
@@ -152,6 +181,63 @@ app.get('/api/health/pool', async (req, res) => {
     }
 });
 
+// Health check do Redis e sessões
+app.get('/api/health/redis', async (req, res) => {
+    try {
+        const redisHealth = await redisSession.getHealth();
+        const sessionStats = await redisSession.getSessionStats();
+
+        res.status(redisHealth.status === 'healthy' ? 200 : 200).json({
+            status: redisHealth.status,
+            redis: redisHealth,
+            sessions: sessionStats,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(503).json({
+            status: 'ERROR',
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
+// Health check geral do sistema
+app.get('/api/health/system', async (req, res) => {
+    try {
+        const [redisHealth, poolHealth, sessionStats] = await Promise.all([
+            redisSession.getHealth(),
+            Promise.resolve(dbPool.getHealth()),
+            redisSession.getSessionStats()
+        ]);
+
+        const overallStatus =
+            redisHealth.status === 'healthy' &&
+                (poolHealth.status === 'healthy' || poolHealth.status === 'disabled')
+                ? 'healthy' : 'degraded';
+
+        res.status(overallStatus === 'healthy' ? 200 : 206).json({
+            status: overallStatus,
+            components: {
+                redis: redisHealth,
+                database: poolHealth,
+                sessions: sessionStats
+            },
+            performance: {
+                activeSessions: sessionStats.activeSessions || 0,
+                connections: poolHealth.connectionCount || 0
+            },
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(503).json({
+            status: 'ERROR',
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
 // Rotas da API
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
@@ -197,6 +283,9 @@ async function startServer() {
         // Conectar ao banco de dados
         await sequelize.authenticate();
         console.log('✅ Conexão com banco de dados estabelecida');
+
+        // Configurar sessões Redis
+        await setupSessions();
 
         // Sincronizar modelos (apenas em desenvolvimento)
         if (process.env.NODE_ENV === 'development') {
