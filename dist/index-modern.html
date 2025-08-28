@@ -836,8 +836,17 @@
 
         // Google Authentication Functions
         function redirectToGoogleAuth() {
-            // Redireciona diretamente para o backend OAuth
-            window.location.href = 'http://localhost:3001/api/auth/google';
+            // Detectar ambiente e usar URL correta
+            const hostname = window.location.hostname;
+            let backendUrl;
+
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                backendUrl = 'http://localhost:3001';
+            } else {
+                backendUrl = 'https://evo-api-calculadora-backend.usg3xn.easypanel.host';
+            }
+
+            window.location.href = `${backendUrl}/api/auth/google`;
         }
 
         // Check if user is returning from OAuth with token

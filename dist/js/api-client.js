@@ -23,7 +23,7 @@ class SublimaCalcAPI {
 
         // Ambiente de produção - EasyPanel
         if (hostname.includes('easypanel.host')) {
-            return 'https://evo-api-calculadora-db.usg3xn.easypanel.host/api';
+            return 'https://evo-api-calculadora-backend.usg3xn.easypanel.host/api';
         }
 
         // Fallback para desenvolvimento

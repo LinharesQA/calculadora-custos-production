@@ -1,0 +1,339 @@
+/**
+ * 🎨 Estilos de Performance - Loading States e Animações Otimizadas
+ */
+
+/* === LOADING STATES === */
+
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #6366f1;
+    border-radius: 50%;
+    animation: loading-spin 1s linear infinite;
+    z-index: 1000;
+}
+
+@keyframes loading-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Loading overlay para elementos específicos */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    border-radius: inherit;
+}
+
+.loading-overlay.dark {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+}
+
+/* === PERFORMANCE INDICATORS === */
+
+.performance-badge {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #22c55e;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    z-index: 10000;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.performance-badge:hover {
+    opacity: 1;
+}
+
+.performance-badge.cache-hit {
+    background: #3b82f6;
+}
+
+.performance-badge.cache-miss {
+    background: #f59e0b;
+}
+
+.performance-badge.debounced {
+    background: #8b5cf6;
+}
+
+/* === SMOOTH TRANSITIONS === */
+
+.smooth-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.smooth-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* === SKELETON LOADING === */
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton.dark {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background-size: 200% 100%;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-text {
+    height: 1rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-text.h-2 { height: 0.5rem; }
+.skeleton-text.h-3 { height: 0.75rem; }
+.skeleton-text.h-4 { height: 1rem; }
+.skeleton-text.h-6 { height: 1.5rem; }
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-button {
+    height: 40px;
+    border-radius: 8px;
+    width: 120px;
+}
+
+/* === OPTIMIZED FORM ELEMENTS === */
+
+.optimized-input {
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.optimized-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.optimized-input.debouncing {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+}
+
+.optimized-input.calculating {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1);
+}
+
+/* === CACHE STATUS INDICATOR === */
+
+.cache-status {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+}
+
+.cache-status.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cache-status .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.cache-status .status-dot.hit {
+    background: #22c55e;
+    animation: pulse 2s infinite;
+}
+
+.cache-status .status-dot.miss {
+    background: #f59e0b;
+}
+
+.cache-status .status-dot.error {
+    background: #ef4444;
+}
+
+/* === PERFORMANCE METRICS === */
+
+.perf-metrics {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.9);
+    color: #00ff00;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    z-index: 10000;
+    max-width: 200px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.perf-metrics.show {
+    opacity: 1;
+}
+
+.perf-metrics .metric {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.perf-metrics .metric:last-child {
+    margin-bottom: 0;
+}
+
+.perf-metrics .value {
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+.perf-metrics .value.good {
+    color: #22c55e;
+}
+
+.perf-metrics .value.warning {
+    color: #f59e0b;
+}
+
+.perf-metrics .value.error {
+    color: #ef4444;
+}
+
+/* === LAZY LOADING === */
+
+.lazy-load {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.lazy-load.loaded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* === RESPONSIVE OPTIMIZATIONS === */
+
+@media (max-width: 768px) {
+    .performance-badge {
+        top: 5px;
+        right: 5px;
+        padding: 2px 6px;
+        font-size: 9px;
+    }
+    
+    .cache-status {
+        bottom: 10px;
+        left: 10px;
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+    
+    .perf-metrics {
+        top: 30px;
+        right: 5px;
+        padding: 8px;
+        font-size: 10px;
+        max-width: 150px;
+    }
+    
+    .loading::after {
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+    }
+}
+
+/* === PRINT OPTIMIZATIONS === */
+
+@media print {
+    .performance-badge,
+    .cache-status,
+    .perf-metrics,
+    .loading-overlay {
+        display: none !important;
+    }
+}
+
+/* === DARK MODE OPTIMIZATIONS === */
+
+@media (prefers-color-scheme: dark) {
+    .skeleton {
+        background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+        background-size: 200% 100%;
+    }
+    
+    .loading-overlay {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+    }
+}
+
+/* === REDUCED MOTION === */
+
+@media (prefers-reduced-motion: reduce) {
+    .loading::after,
+    .skeleton,
+    .lazy-load,
+    .smooth-transition,
+    .smooth-hover {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .loading::after {
+        border: 2px solid #6366f1;
+        border-top: 2px solid transparent;
+    }
+}

@@ -80,8 +80,22 @@
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+
+    <!-- Performance System (carregar primeiro) -->
+    <script src="js/performance.js"></script>
+
+    <!-- API and Configuration -->
     <script src="js/config.js"></script>
     <script src="js/api-client.js"></script>
+
+    <!-- Optimized Calculator (carregar após performance) -->
+    <script src="js/calculator-optimized.js"></script>
+
+    <!-- Performance Monitor (desenvolvimento) -->
+    <script src="js/performance-monitor.js"></script>
+
+    <!-- Performance CSS -->
+    <link rel="stylesheet" href="css/performance.css">
 
     <!-- Custom Styles -->
     <style>
@@ -568,9 +582,11 @@
                                         placeholder="Nome do molde (ex: Caneca Branca 325ml)"
                                         class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/30 transition-all duration-300">
                                     <div class="grid grid-cols-2 gap-4">
-                                        <input type="number" id="new-mold-width" placeholder="Largura (cm)" step="0.1"
+                                        <input type="number" id="new-mold-width" placeholder="Largura (metros)"
+                                            step="0.01"
                                             class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/30 transition-all duration-300">
-                                        <input type="number" id="new-mold-height" placeholder="Altura (cm)" step="0.1"
+                                        <input type="number" id="new-mold-height" placeholder="Altura (metros)"
+                                            step="0.01"
                                             class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/30 transition-all duration-300">
                                     </div>
                                     <button id="add-mold-btn"
@@ -630,7 +646,7 @@
                                     <input type="text" id="new-roll-name"
                                         placeholder="Nome da bobina (ex: Papel Sublimático A4)"
                                         class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-secondary-400/60 focus:ring-2 focus:ring-secondary-400/30 transition-all duration-300">
-                                    <input type="number" id="new-roll-width" placeholder="Largura (cm)" step="0.1"
+                                    <input type="number" id="new-roll-width" placeholder="Largura (metros)" step="0.01"
                                         class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-secondary-400/60 focus:ring-2 focus:ring-secondary-400/30 transition-all duration-300">
                                     <button id="add-roll-btn"
                                         class="w-full bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-500/30 transform hover:scale-[1.02] hover-glow">
@@ -847,7 +863,7 @@
             const user = localStorage.getItem('user');
 
             if (!token || !user) {
-                window.location.href = '/';
+                window.location.href = 'index-modern.html';
                 return;
             }
 
@@ -856,7 +872,7 @@
             } catch (e) {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('user');
-                window.location.href = '/';
+                window.location.href = 'index-modern.html';
                 return;
             }
         }
@@ -936,82 +952,145 @@
             });
 
             // Adicionar molde
-            document.getElementById('add-mold-btn').addEventListener('click', () => {
+            document.getElementById('add-mold-btn').addEventListener('click', async () => {
                 const name = document.getElementById('new-mold-name').value.trim();
                 const width = parseFloat(document.getElementById('new-mold-width').value);
                 const height = parseFloat(document.getElementById('new-mold-height').value);
 
                 if (name && width > 0 && height > 0) {
-                    appState.molds.push({
-                        name,
-                        width,
-                        height,
-                        createdAt: new Date().toISOString()
-                    });
-                    saveAppState();
-                    renderMolds();
-                    renderPlanningMoldSelect();
-                    updateDashboard();
+                    try {
+                        // 🚀 USAR BACKEND para salvar no banco
+                        const result = await api.createMold({
+                            name,
+                            width,
+                            height
+                        });
 
-                    // Limpar inputs
-                    document.getElementById('new-mold-name').value = '';
-                    document.getElementById('new-mold-width').value = '';
-                    document.getElementById('new-mold-height').value = '';
+                        console.log('✅ Molde criado no backend:', result);
 
-                    showNotification('Molde adicionado com sucesso!', 'success');
+                        // Adicionar ao estado local (com ID do banco)
+                        appState.molds.push({
+                            id: result.mold.id,
+                            name: result.mold.name,
+                            width: result.mold.width,
+                            height: result.mold.height,
+                            createdAt: result.mold.createdAt
+                        });
+
+                        saveAppState();
+                        renderMolds();
+                        renderPlanningMoldSelect();
+                        updateDashboard();
+
+                        // Limpar inputs
+                        document.getElementById('new-mold-name').value = '';
+                        document.getElementById('new-mold-width').value = '';
+                        document.getElementById('new-mold-height').value = '';
+
+                        showNotification('Molde salvo no banco de dados!', 'success');
+                    } catch (error) {
+                        console.error('❌ Erro ao criar molde:', error);
+                        showNotification(error.message, 'error');
+                    }
                 } else {
                     showNotification('Preencha todos os campos do molde.', 'error');
                 }
             });
 
             // Adicionar bobina
-            document.getElementById('add-roll-btn').addEventListener('click', () => {
+            document.getElementById('add-roll-btn').addEventListener('click', async () => {
                 const name = document.getElementById('new-roll-name').value.trim();
                 const width = parseFloat(document.getElementById('new-roll-width').value);
 
                 if (name && width > 0) {
-                    appState.rolls.push({
-                        name,
-                        width,
-                        createdAt: new Date().toISOString()
-                    });
-                    saveAppState();
-                    renderRolls();
-                    renderCalculationRollSelect();
-                    updateDashboard();
+                    try {
+                        // 🚀 USAR BACKEND para salvar no banco
+                        const result = await api.createRoll({
+                            name,
+                            width
+                        });
 
-                    // Limpar inputs
-                    document.getElementById('new-roll-name').value = '';
-                    document.getElementById('new-roll-width').value = '';
+                        console.log('✅ Bobina criada no backend:', result);
 
-                    showNotification('Bobina adicionada com sucesso!', 'success');
+                        // Adicionar ao estado local (com ID do banco)
+                        appState.rolls.push({
+                            id: result.roll.id,
+                            name: result.roll.name,
+                            width: result.roll.width,
+                            createdAt: result.roll.createdAt
+                        });
+
+                        saveAppState();
+                        renderRolls();
+                        renderCalculationRollSelect();
+                        updateDashboard();
+
+                        // Limpar inputs
+                        document.getElementById('new-roll-name').value = '';
+                        document.getElementById('new-roll-width').value = '';
+
+                        showNotification('Bobina salva no banco de dados!', 'success');
+                    } catch (error) {
+                        console.error('❌ Erro ao criar bobina:', error);
+                        showNotification(error.message, 'error');
+                    }
                 } else {
                     showNotification('Preencha todos os campos da bobina.', 'error');
                 }
             });
 
             // Event listeners para remoção
-            document.getElementById('mold-library-list').addEventListener('click', e => {
+            document.getElementById('mold-library-list').addEventListener('click', async e => {
                 if (e.target.classList.contains('remove-mold-btn')) {
                     const index = parseInt(e.target.dataset.index);
-                    appState.molds.splice(index, 1);
-                    saveAppState();
-                    renderMolds();
-                    renderPlanningMoldSelect();
-                    updateDashboard();
-                    showNotification('Molde removido!', 'info');
+                    const mold = appState.molds[index];
+
+                    if (confirm('Tem certeza que deseja excluir este molde?')) {
+                        try {
+                            // Se o molde tem ID, excluir do servidor
+                            if (mold.id) {
+                                await api.deleteMold(mold.id);
+                            }
+
+                            // Remover do estado local
+                            appState.molds.splice(index, 1);
+                            saveAppState();
+                            renderMolds();
+                            renderPlanningMoldSelect();
+                            updateDashboard();
+                            showNotification('Molde removido com sucesso!', 'success');
+                        } catch (error) {
+                            console.error('Erro ao remover molde:', error);
+                            showNotification('Erro ao remover molde!', 'error');
+                        }
+                    }
                 }
             });
 
-            document.getElementById('roll-library-list').addEventListener('click', e => {
+            document.getElementById('roll-library-list').addEventListener('click', async e => {
                 if (e.target.classList.contains('remove-roll-btn')) {
                     const index = parseInt(e.target.dataset.index);
-                    appState.rolls.splice(index, 1);
-                    saveAppState();
-                    renderRolls();
-                    renderCalculationRollSelect();
-                    updateDashboard();
-                    showNotification('Bobina removida!', 'info');
+                    const roll = appState.rolls[index];
+
+                    if (confirm('Tem certeza que deseja excluir esta bobina?')) {
+                        try {
+                            // Se a bobina tem ID, excluir do servidor
+                            if (roll.id) {
+                                await api.deleteRoll(roll.id);
+                            }
+
+                            // Remover do estado local
+                            appState.rolls.splice(index, 1);
+                            saveAppState();
+                            renderRolls();
+                            renderCalculationRollSelect();
+                            updateDashboard();
+                            showNotification('Bobina removida com sucesso!', 'success');
+                        } catch (error) {
+                            console.error('Erro ao remover bobina:', error);
+                            showNotification('Erro ao remover bobina!', 'error');
+                        }
+                    }
                 }
             });
 
@@ -1097,7 +1176,7 @@
                             </div>
                             <div class="library-item-info">
                                 <h5>${mold.name}</h5>
-                                <p>${mold.width}cm × ${mold.height}cm • Área: ${(mold.width * mold.height).toFixed(1)}cm²</p>
+                                <p>${mold.width}m × ${mold.height}m • Área: ${(mold.width * mold.height).toFixed(4)}m²</p>
                             </div>
                         </div>
                         <div class="library-item-actions">
@@ -1143,7 +1222,7 @@
                             </div>
                             <div class="library-item-info">
                                 <h5>${roll.name}</h5>
-                                <p>${roll.width}cm de largura • Papel sublimático</p>
+                                <p>${roll.width}m de largura • Papel sublimático</p>
                             </div>
                         </div>
                         <div class="library-item-actions">
@@ -1168,7 +1247,7 @@
             appState.molds.forEach((mold, index) => {
                 const option = document.createElement('option');
                 option.value = index;
-                option.textContent = `${mold.name} (${mold.width}×${mold.height}cm)`;
+                option.textContent = `${mold.name} (${mold.width}×${mold.height}m)`;
                 select.appendChild(option);
             });
         }
@@ -1181,7 +1260,7 @@
             appState.rolls.forEach((roll, index) => {
                 const option = document.createElement('option');
                 option.value = index;
-                option.textContent = `${roll.name} (${roll.width}cm)`;
+                option.textContent = `${roll.name} (${roll.width}m)`;
                 select.appendChild(option);
             });
         }
@@ -1198,7 +1277,7 @@
                     const div = document.createElement('div');
                     div.className = 'flex justify-between items-center p-3 glass rounded-xl border border-white/10';
                     div.innerHTML = `
-                        <span class="text-sm text-white">${item.qty}x ${item.mold.name} (${item.mold.width}×${item.mold.height}cm)</span>
+                        <span class="text-sm text-white">${item.qty}x ${item.mold.name} (${item.mold.width}×${item.mold.height}m)</span>
                         <button onclick="removePlanningItem(${index})" class="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-400/10 transition-all">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -1216,90 +1295,135 @@
         }
 
         // Calcular custos
-        function calculateCosts() {
-            if (planningItems.length === 0) {
-                showNotification('Adicione itens ao planejamento primeiro!', 'error');
-                return;
-            }
+        async function calculateCosts() {
+            try {
+                // Validações iniciais
+                if (planningItems.length === 0) {
+                    showNotification('Adicione itens ao planejamento primeiro!', 'error');
+                    return;
+                }
 
-            const rollIndex = document.getElementById('calculation-roll-select').value;
-            const rollPrice = parseFloat(document.getElementById('roll-price').value);
-            const rollLength = parseFloat(document.getElementById('roll-length').value);
-            const profitMargin = parseFloat(document.getElementById('profit-margin').value) || 30;
-            const additionalCost = parseFloat(document.getElementById('additional-cost').value) || 0;
+                const rollIndex = document.getElementById('calculation-roll-select').value;
+                const rollPrice = parseFloat(document.getElementById('roll-price').value);
+                const rollLength = parseFloat(document.getElementById('roll-length').value);
+                const profitMargin = parseFloat(document.getElementById('profit-margin').value) || 30;
+                const additionalCost = parseFloat(document.getElementById('additional-cost').value) || 0;
 
-            if (rollIndex === '' || !rollPrice || !rollLength) {
-                showNotification('Preencha todos os dados da bobina!', 'error');
-                return;
-            }
+                // Validar dados da bobina
+                if (rollIndex === '' || !rollPrice || !rollLength || rollPrice <= 0 || rollLength <= 0) {
+                    showNotification('Preencha todos os dados da bobina com valores válidos!', 'error');
+                    return;
+                }
 
-            const roll = appState.rolls[rollIndex];
+                const roll = appState.rolls[rollIndex];
 
-            // Calcular otimização para cada item
-            const calculationResults = planningItems.map(item => {
-                const moldsAcross = Math.floor(roll.width / item.mold.width);
-                const moldHeight = item.mold.height / 100; // converter para metros
-                const totalRows = Math.ceil(item.qty / moldsAcross);
-                const lengthNeeded = totalRows * moldHeight;
-                const areaNeeded = lengthNeeded * (roll.width / 100);
+                // Validar se bobina existe
+                if (!roll) {
+                    showNotification('Bobina selecionada não encontrada!', 'error');
+                    return;
+                }
 
-                return {
-                    mold: item.mold,
-                    qty: item.qty,
-                    moldsAcross,
-                    totalRows,
-                    lengthNeeded,
-                    areaNeeded
+                // 🎯 FRONTEND APENAS COLETA DADOS - BACKEND FAZ TODO O CÁLCULO
+                console.log('🚀 Iniciando cálculo no BACKEND...');
+
+                console.log('📦 Dados coletados para backend:', {
+                    roll: roll,
+                    rollPrice,
+                    rollLength,
+                    profitMargin,
+                    additionalCost,
+                    planningItems: planningItems
+                });
+
+                // � CRIAR PROJETO NO BACKEND
+                const projectData = {
+                    name: `Projeto ${new Date().toLocaleString()}`,
+                    roll_id: roll.id,
+                    roll_price: rollPrice,
+                    roll_length: rollLength,
+                    profit_margin: profitMargin,
+                    additional_cost: additionalCost,
+                    items: planningItems.map(item => ({
+                        moldId: item.mold.id,
+                        quantity: item.qty
+                    }))
                 };
-            });
 
-            // Calcular totais
-            const totalLengthNeededM = calculationResults.reduce((sum, item) => sum + item.lengthNeeded, 0);
-            const totalSqmNeeded = calculationResults.reduce((sum, item) => sum + item.areaNeeded, 0);
-            const totalPieces = planningItems.reduce((sum, item) => sum + item.qty, 0);
+                showNotification('Calculando no servidor...', 'info');
 
-            // Calcular custos
-            const paperCostPerMeter = rollPrice / rollLength;
-            const totalPaperCost = totalLengthNeededM * paperCostPerMeter;
-            const totalCostWithAdditional = totalPaperCost + additionalCost;
-            const costPerPiece = totalCostWithAdditional / totalPieces;
+                const projectResult = await api.createProject(projectData);
+                console.log('✅ Projeto criado no backend:', projectResult);
 
-            // Calcular preços de venda
-            const sellPricePerPiece = costPerPiece * (1 + profitMargin / 100);
-            const totalSellPrice = sellPricePerPiece * totalPieces;
-            const totalProfit = totalSellPrice - totalCostWithAdditional;
+                // 🧮 EXECUTAR CÁLCULO NO BACKEND (toda a lógica está lá)
+                const calcResult = await api.calculateProject(projectResult.project.id, planningItems.map(item => ({
+                    moldId: item.mold.id,
+                    quantity: item.qty
+                })));
 
-            // Dados do projeto
-            const projectData = {
-                roll,
-                rollPrice,
-                rollLength,
-                profitMargin,
-                additionalCost,
-                items: calculationResults,
-                results: {
-                    totalPieces,
-                    totalLengthNeededM,
-                    totalSqmNeeded,
-                    totalPaperCost,
-                    totalCostWithAdditional,
-                    costPerPiece,
-                    sellPricePerPiece,
-                    totalSellPrice,
-                    totalProfit
-                },
-                calculatedAt: new Date().toISOString()
-            };
+                console.log('✅ Cálculo concluído no backend:', calcResult);
 
-            currentProjectData = projectData;
-            displayCalculationResults(projectData);
+                // 📊 EXIBIR RESULTADOS vindos do backend
+                if (calcResult && calcResult.calculations) {
+                    const backendData = calcResult.calculations;
 
-            // Atualizar última calculação
-            appState.lastCalculation = new Date().toISOString();
-            saveAppState();
-            updateDashboard();
+                    // Preparar dados para exibição usando resultados do backend
+                    const projectDisplayData = {
+                        roll,
+                        rollPrice,
+                        rollLength,
+                        profitMargin,
+                        additionalCost,
+                        items: backendData.items || [],
+                        results: {
+                            totalPieces: backendData.totalPieces || 0,
+                            totalLengthNeededM: backendData.totalLengthNeeded || 0,
+                            totalRollAreaUsed: backendData.totalRollAreaUsed || 0,
+                            totalMoldArea: backendData.totalMoldArea || 0,
+                            totalPaperCost: backendData.totalPaperCost || 0,
+                            totalCostWithAdditional: backendData.totalCostWithAdditional || 0,
+                            costPerPiece: backendData.costPerPiece || 0,
+                            sellPricePerPiece: backendData.sellPricePerPiece || 0,
+                            totalSellPrice: backendData.totalSellPrice || 0,
+                            totalProfit: backendData.totalProfit || 0
+                        },
+                        calculatedAt: new Date().toISOString()
+                    };
 
-            showNotification('Cálculo realizado com sucesso!', 'success');
+                    currentProjectData = projectDisplayData;
+                    displayCalculationResults(projectDisplayData);
+
+                    // Atualizar estado local
+                    appState.lastCalculation = new Date().toISOString();
+                    saveAppState();
+                    updateDashboard();
+
+                    showNotification('✅ Cálculo realizado com sucesso no servidor!', 'success');
+                } else {
+                    throw new Error('Resultado inválido do servidor');
+                }
+
+            } catch (error) {
+                console.error('❌ Erro no cálculo:', error);
+
+                // Mensagem mais específica baseada no tipo de erro
+                let errorMessage = error.message;
+                if (error.message.includes('maior que a largura da bobina')) {
+                    errorMessage += '\n\n💡 Sugestões:\n• Use uma bobina mais larga\n• Escolha um molde menor\n• Rotacione o molde se possível';
+                } else if (error.message.includes('Papel insuficiente')) {
+                    errorMessage += '\n\n💡 Sugestões:\n• Use uma bobina com mais metragem\n• Reduza a quantidade de peças\n• Otimize o layout';
+                }
+
+                showNotification(errorMessage, 'error');
+
+                // Limpar resultados em caso de erro
+                document.getElementById('planning-result').innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-exclamation-triangle text-red-400 text-3xl mb-4"></i>
+                        <p class="text-red-400 font-medium">Erro no cálculo</p>
+                        <p class="text-gray-400 text-sm mt-2">${error.message}</p>
+                    </div>
+                `;
+            }
         }
 
         // Exibir resultados do cálculo
@@ -1343,8 +1467,12 @@
                                     <span class="font-medium text-white">${results.totalLengthNeededM.toFixed(2)}m</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-white/80">Área total:</span>
-                                    <span class="font-medium text-white">${results.totalSqmNeeded.toFixed(2)}m²</span>
+                                    <span class="text-white/80">Área dos moldes:</span>
+                                    <span class="font-medium text-white">${results.totalMoldArea.toFixed(2)}m²</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-white/80">Área da bobina usada:</span>
+                                    <span class="font-medium text-white">${results.totalRollAreaUsed.toFixed(2)}m²</span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-white/80">Custo do papel:</span>
@@ -1420,12 +1548,12 @@
                                 <tbody>
                                     ${data.items.map(item => `
                                         <tr class="border-b border-white/10">
-                                            <td class="p-3 font-medium text-white">${item.mold.name}</td>
-                                            <td class="text-center p-3 text-white/80">${item.qty}x</td>
+                                            <td class="p-3 font-medium text-white">${item.moldName}</td>
+                                            <td class="text-center p-3 text-white/80">${item.quantity}x</td>
                                             <td class="text-center p-3 text-white/80">${item.moldsAcross}</td>
                                             <td class="text-center p-3 text-white/80">${item.totalRows}</td>
                                             <td class="text-center p-3 text-white/80">${item.lengthNeeded.toFixed(2)}m</td>
-                                            <td class="text-center p-3 text-white/80">${item.areaNeeded.toFixed(2)}m²</td>
+                                            <td class="text-center p-3 text-white/80">${item.totalMoldArea.toFixed(4)}m²</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
@@ -1648,6 +1776,9 @@
                 document.getElementById('stats-total-value').textContent = 'R$ 0,00';
                 document.getElementById('stats-total-profit').textContent = 'R$ 0,00';
                 document.getElementById('stats-avg-ticket').textContent = 'R$ 0,00';
+
+                // Limpar gráficos quando não há dados
+                clearCharts();
                 return;
             }
 
@@ -1660,6 +1791,162 @@
             document.getElementById('stats-total-value').textContent = totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             document.getElementById('stats-total-profit').textContent = totalProfit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             document.getElementById('stats-avg-ticket').textContent = avgTicket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            // Atualizar gráficos
+            updateCharts();
+        }
+
+        // Variáveis para armazenar as instâncias dos gráficos
+        let projectsChart = null;
+        let moldsChart = null;
+
+        // Função para limpar gráficos
+        function clearCharts() {
+            if (projectsChart) {
+                projectsChart.destroy();
+                projectsChart = null;
+            }
+            if (moldsChart) {
+                moldsChart.destroy();
+                moldsChart = null;
+            }
+        }
+
+        // Função para atualizar gráficos
+        function updateCharts() {
+            clearCharts();
+
+            // Gráfico de evolução de projetos
+            createProjectsChart();
+
+            // Gráfico de moldes mais utilizados
+            createMoldsChart();
+        }
+
+        // Criar gráfico de evolução de projetos
+        function createProjectsChart() {
+            const ctx = document.getElementById('projects-chart').getContext('2d');
+
+            // Agrupar projetos por mês
+            const monthlyData = {};
+            appState.projects.forEach(project => {
+                if (project.createdAt) {
+                    const date = new Date(project.createdAt);
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    monthlyData[monthKey] = (monthlyData[monthKey] || 0) + 1;
+                }
+            });
+
+            const sortedMonths = Object.keys(monthlyData).sort();
+            const labels = sortedMonths.map(month => {
+                const [year, monthNum] = month.split('-');
+                const date = new Date(year, monthNum - 1);
+                return date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+            });
+            const data = sortedMonths.map(month => monthlyData[month]);
+
+            projectsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Projetos por Mês',
+                        data: data,
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#9CA3AF'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#9CA3AF' },
+                            grid: { color: '#374151' }
+                        },
+                        y: {
+                            ticks: { color: '#9CA3AF' },
+                            grid: { color: '#374151' },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Criar gráfico de moldes mais utilizados
+        function createMoldsChart() {
+            const ctx = document.getElementById('molds-chart').getContext('2d');
+
+            // Contar uso de moldes nos projetos
+            const moldUsage = {};
+            appState.projects.forEach(project => {
+                if (project.items) {
+                    project.items.forEach(item => {
+                        const moldKey = `${item.mold} (${item.width}x${item.height}cm)`;
+                        moldUsage[moldKey] = (moldUsage[moldKey] || 0) + item.quantity;
+                    });
+                }
+            });
+
+            const sortedMolds = Object.entries(moldUsage)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 5); // Top 5 moldes
+
+            const labels = sortedMolds.map(([name]) => name);
+            const data = sortedMolds.map(([, count]) => count);
+
+            moldsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Quantidade Utilizada',
+                        data: data,
+                        backgroundColor: [
+                            '#8B5CF6',
+                            '#06D6A0',
+                            '#FFD60A',
+                            '#FF6B6B',
+                            '#4ECDC4'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#9CA3AF'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#9CA3AF',
+                                maxRotation: 45
+                            },
+                            grid: { color: '#374151' }
+                        },
+                        y: {
+                            ticks: { color: '#9CA3AF' },
+                            grid: { color: '#374151' },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
 
         // Renderizar tudo
@@ -1722,8 +2009,7 @@
             if (confirm('Tem certeza que deseja sair?')) {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('user');
-                localStorage.removeItem('isLoggedIn');
-                window.location.href = '/';
+                window.location.href = 'index-modern.html';
             }
         }
     </script>
