@@ -1245,7 +1245,7 @@
             appState.molds.forEach((mold, index) => {
                 const option = document.createElement('option');
                 option.value = index;
-                option.textContent = `${mold.name} (${mold.width}×${mold.height}m)`;
+                option.textContent = `${mold.name} (${mold.width}×${mold.height}cm)`;
                 select.appendChild(option);
             });
         }
@@ -1275,7 +1275,7 @@
                     const div = document.createElement('div');
                     div.className = 'flex justify-between items-center p-3 glass rounded-xl border border-white/10';
                     div.innerHTML = `
-                        <span class="text-sm text-white">${item.qty}x ${item.mold.name} (${item.mold.width}×${item.mold.height}m)</span>
+                        <span class="text-sm text-white">${item.qty}x ${item.mold.name} (${item.mold.width}×${item.mold.height}cm)</span>
                         <button onclick="removePlanningItem(${index})" class="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-400/10 transition-all">
                             <i class="fas fa-trash"></i>
                         </button>

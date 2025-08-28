@@ -17,28 +17,37 @@ class CalculationEngine {
      * Valida entrada básica do cálculo
      */
     static validateInput(data) {
+        console.log('🔍 Validando dados recebidos:', data);
         const { rollWidth, rollLength, rollPrice, profitMargin, additionalCost, items } = data;
 
         const errors = [];
 
-        if (!this.isValidNumber(rollWidth) || rollWidth <= 0) {
-            errors.push('Largura da bobina deve ser um número positivo');
+        // Validações básicas: campo vazio, número negativo, número 0
+        if (rollWidth === null || rollWidth === undefined || rollWidth === '' || isNaN(rollWidth)) {
+            errors.push('Largura da bobina está vazia');
+        } else if (rollWidth <= 0) {
+            errors.push('Largura da bobina deve ser maior que zero');
         }
 
-        if (!this.isValidNumber(rollLength) || rollLength <= 0) {
-            errors.push('Comprimento da bobina deve ser um número positivo');
+        if (rollLength === null || rollLength === undefined || rollLength === '' || isNaN(rollLength)) {
+            errors.push('Comprimento da bobina está vazio');
+        } else if (rollLength <= 0) {
+            errors.push('Comprimento da bobina deve ser maior que zero');
         }
 
-        if (!this.isValidNumber(rollPrice) || rollPrice <= 0) {
-            errors.push('Preço da bobina deve ser um número positivo');
+        if (rollPrice === null || rollPrice === undefined || rollPrice === '' || isNaN(rollPrice)) {
+            errors.push('Preço da bobina está vazio');
+        } else if (rollPrice <= 0) {
+            errors.push('Preço da bobina deve ser maior que zero');
         }
 
-        if (!this.isValidNumber(profitMargin) || profitMargin < 0) {
-            errors.push('Margem de lucro deve ser um número não negativo');
+        // Margem e custo adicional podem ser 0, apenas não podem ser negativos
+        if (profitMargin < 0) {
+            errors.push('Margem de lucro não pode ser negativa');
         }
 
-        if (!this.isValidNumber(additionalCost) || additionalCost < 0) {
-            errors.push('Custo adicional deve ser um número não negativo');
+        if (additionalCost < 0) {
+            errors.push('Custo adicional não pode ser negativo');
         }
 
         if (!Array.isArray(items) || items.length === 0) {
@@ -176,17 +185,35 @@ class CalculationEngine {
             for (const item of items) {
                 const { mold, quantity } = item;
 
-                if (!mold || !this.isValidNumber(quantity) || quantity <= 0) {
-                    throw new Error(`Item inválido: molde ou quantidade inválida`);
+                // Validar quantidade: campo vazio, zero ou negativo
+                if (quantity === null || quantity === undefined || quantity === '' || isNaN(quantity)) {
+                    throw new Error(`Quantidade está vazia para o molde "${mold?.name || 'desconhecido'}"`);
+                }
+                if (quantity <= 0) {
+                    throw new Error(`Quantidade deve ser maior que zero para o molde "${mold?.name || 'desconhecido'}"`);
                 }
 
-                // Validar dimensões do molde
-                if (!this.isValidNumber(mold.width) || !this.isValidNumber(mold.height) ||
-                    mold.width <= 0 || mold.height <= 0) {
-                    throw new Error(`Molde "${mold.name}" tem dimensões inválidas`);
+                // Validar se molde existe
+                if (!mold) {
+                    throw new Error('Molde não encontrado');
                 }
 
-                // Verificar se molde cabe na bobina
+                // Validar dimensões do molde: campo vazio, zero ou negativo
+                if (mold.width === null || mold.width === undefined || mold.width === '' || isNaN(mold.width)) {
+                    throw new Error(`Largura do molde "${mold.name}" está vazia`);
+                }
+                if (mold.width <= 0) {
+                    throw new Error(`Largura do molde "${mold.name}" deve ser maior que zero`);
+                }
+
+                if (mold.height === null || mold.height === undefined || mold.height === '' || isNaN(mold.height)) {
+                    throw new Error(`Altura do molde "${mold.name}" está vazia`);
+                }
+                if (mold.height <= 0) {
+                    throw new Error(`Altura do molde "${mold.name}" deve ser maior que zero`);
+                }
+
+                // ÚNICA validação específica: molde maior que bobina
                 const moldWidthValidated = this.validateMoldFitsInRoll(mold.width, rollWidth, mold.name);
 
                 // Calcular otimização
