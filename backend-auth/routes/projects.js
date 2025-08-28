@@ -298,8 +298,10 @@ router.post('/:id/calculate',
                 });
             }
 
-            // Área total dos itens
-            let totalArea = 0;
+            // Área total dos itens E cálculo de otimização
+            let totalLengthNeeded = 0;
+            let totalPieces = 0;
+            let totalMoldArea = 0;
             const calculatedItems = [];
 
             for (const item of items) {
@@ -309,92 +311,117 @@ router.post('/:id/calculate',
                     const mold = await Mold.findByPk(moldId);
 
                     // VALIDAÇÃO: Verificar se o molde cabe na bobina
-                    if (parseFloat(mold.width) > rollWidth) {
+                    const moldWidth = parseFloat(mold.width);
+                    if (moldWidth > rollWidth) {
                         return res.status(400).json({
-                            error: `Molde "${mold.name}" (${mold.width}cm de largura) é maior que a largura da bobina (${rollWidth}cm). Use uma bobina mais larga ou um molde menor.`
+                            error: `Molde "${mold.name}" (${moldWidth}cm de largura) é maior que a largura da bobina (${rollWidth}cm). Use uma bobina mais larga ou um molde menor.`
                         });
                     }
 
-                    const moldArea = parseFloat(mold.width) * parseFloat(mold.height);
-                    const itemTotalArea = moldArea * parseInt(quantity);
+                    // CÁLCULO DE OTIMIZAÇÃO (como o frontend fazia)
+                    const moldHeight = parseFloat(mold.height);
+                    const qty = parseInt(quantity);
 
-                    totalArea += itemTotalArea;
+                    // Quantos moldes cabem na largura da bobina
+                    const moldsAcross = Math.floor(rollWidth / moldWidth);
+
+                    // Quantas linhas são necessárias
+                    const totalRows = Math.ceil(qty / moldsAcross);
+
+                    // Comprimento necessário em metros
+                    const lengthNeeded = totalRows * (moldHeight / 100); // converter cm para metros
+
+                    // Área do molde em m²
+                    const moldAreaM2 = (moldWidth / 100) * (moldHeight / 100);
+                    const itemTotalMoldArea = moldAreaM2 * qty;
+
+                    totalLengthNeeded += lengthNeeded;
+                    totalPieces += qty;
+                    totalMoldArea += itemTotalMoldArea;
 
                     calculatedItems.push({
                         moldId: mold.id,
                         moldName: mold.name,
-                        moldWidth: parseFloat(mold.width),
-                        moldHeight: parseFloat(mold.height),
-                        moldArea,
-                        quantity: parseInt(quantity),
-                        totalArea: itemTotalArea
+                        moldWidth,
+                        moldHeight,
+                        quantity: qty,
+                        moldsAcross,
+                        totalRows,
+                        lengthNeeded,
+                        moldArea: moldAreaM2,
+                        totalMoldArea: itemTotalMoldArea
                     });
                 }
             }
 
-            // Validar se foi calculada alguma área
-            if (totalArea <= 0) {
+            // Validar se temos dados válidos
+            if (totalPieces <= 0) {
                 return res.status(400).json({
-                    error: 'Nenhuma área válida foi calculada. Verifique os moldes e quantidades.'
+                    error: 'Nenhuma peça válida foi calculada. Verifique os moldes e quantidades.'
                 });
             }
 
-            // Cálculos
-            // rollWidth já está em cm, rollLength deve estar em metros
-            // Converter metros para centímetros: rollLength * 100
-            const rollTotalArea = rollWidth * (rollLength * 100); // cm × cm = cm²
-
-            console.log('🔍 Debug - Cálculos:', {
-                rollWidth,
-                rollLength,
-                rollTotalArea,
-                totalArea
-            });
-
-            // Verificar se temos área válida para evitar divisão por zero
-            if (rollTotalArea <= 0) {
+            // Verificar se há papel suficiente
+            if (totalLengthNeeded > rollLength) {
+                const difference = (totalLengthNeeded - rollLength).toFixed(2);
                 return res.status(400).json({
-                    error: 'Área da bobina inválida. Verifique largura e comprimento.'
+                    error: `Papel insuficiente! Necessário: ${totalLengthNeeded.toFixed(2)}m, Disponível: ${rollLength}m (Falta: ${difference}m)`
                 });
             }
 
-            const costPerCm2 = rollPrice / rollTotalArea;
-            const materialCost = totalArea * costPerCm2;
-            const totalCost = materialCost + additionalCost;
-            const totalPrice = totalCost * (1 + profitMargin / 100);
-            const totalProfit = totalPrice - totalCost;
+            // Cálculos de custo (como o frontend fazia)
+            const totalRollAreaUsed = totalLengthNeeded * (rollWidth / 100); // área da bobina utilizada em m²
+            const paperCostPerMeter = rollPrice / rollLength;
+            const totalPaperCost = totalLengthNeeded * paperCostPerMeter;
+            const totalCostWithAdditional = totalPaperCost + additionalCost;
+            const costPerPiece = totalCostWithAdditional / totalPieces;
 
-            console.log('🔍 Debug - Resultados:', {
-                costPerCm2,
-                materialCost,
-                totalCost,
-                totalPrice,
+            // Preços de venda
+            const sellPricePerPiece = costPerPiece * (1 + profitMargin / 100);
+            const totalSellPrice = sellPricePerPiece * totalPieces;
+            const totalProfit = totalSellPrice - totalCostWithAdditional;
+
+            console.log('🔍 Debug - Cálculos corretos:', {
+                totalPieces,
+                totalLengthNeeded,
+                totalRollAreaUsed,
+                totalMoldArea,
+                totalPaperCost,
+                totalCostWithAdditional,
+                costPerPiece,
+                sellPricePerPiece,
+                totalSellPrice,
                 totalProfit
             });
 
-            const calculationData = {
-                rollWidth,
-                rollTotalArea,
-                costPerCm2,
-                materialCost,
-                totalArea,
-                calculatedItems,
-                calculatedAt: new Date().toISOString()
-            };
-
             // Validar se os cálculos são válidos
-            if (!isFinite(totalCost) || !isFinite(totalPrice) || !isFinite(totalProfit)) {
-                console.error('Cálculos inválidos:', { totalCost, totalPrice, totalProfit, rollTotalArea, costPerCm2 });
+            if (!isFinite(totalCostWithAdditional) || !isFinite(totalSellPrice) || !isFinite(totalProfit)) {
+                console.error('Cálculos inválidos:', { totalCostWithAdditional, totalSellPrice, totalProfit });
                 return res.status(400).json({
                     error: 'Erro nos cálculos. Verifique os dados da bobina e moldes.'
                 });
             }
 
+            const calculationData = {
+                totalPieces,
+                totalLengthNeeded,
+                totalRollAreaUsed,
+                totalMoldArea,
+                totalPaperCost,
+                totalCostWithAdditional,
+                costPerPiece,
+                sellPricePerPiece,
+                totalSellPrice,
+                totalProfit,
+                items: calculatedItems,
+                calculatedAt: new Date().toISOString()
+            };
+
             // Atualizar projeto
             await project.update({
                 items: calculatedItems,
-                total_cost: totalCost,
-                total_price: totalPrice,
+                total_cost: totalCostWithAdditional,
+                total_price: totalSellPrice,
                 total_profit: totalProfit,
                 calculation_data: calculationData,
                 status: 'calculated'
@@ -403,13 +430,17 @@ router.post('/:id/calculate',
             res.json({
                 success: true,
                 message: 'Cálculo realizado com sucesso',
-                calculation: {
-                    totalArea: totalArea.toFixed(2),
-                    materialCost: materialCost.toFixed(2),
-                    totalCost: totalCost.toFixed(2),
-                    totalPrice: totalPrice.toFixed(2),
+                calculations: {
+                    totalPieces,
+                    totalLengthNeeded: totalLengthNeeded.toFixed(2),
+                    totalRollAreaUsed: totalRollAreaUsed.toFixed(2),
+                    totalMoldArea: totalMoldArea.toFixed(2),
+                    totalPaperCost: totalPaperCost.toFixed(2),
+                    totalCostWithAdditional: totalCostWithAdditional.toFixed(2),
+                    costPerPiece: costPerPiece.toFixed(2),
+                    sellPricePerPiece: sellPricePerPiece.toFixed(2),
+                    totalSellPrice: totalSellPrice.toFixed(2),
                     totalProfit: totalProfit.toFixed(2),
-                    costPerCm2: costPerCm2.toFixed(4),
                     items: calculatedItems
                 }
             });
