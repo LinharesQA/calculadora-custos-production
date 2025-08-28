@@ -321,7 +321,7 @@ router.post('/:id/calculate',
             // rollWidth já está em cm, rollLength deve estar em metros
             // Converter metros para centímetros: rollLength * 100
             const rollTotalArea = rollWidth * (rollLength * 100); // cm × cm = cm²
-            
+
             console.log('🔍 Debug - Cálculos:', {
                 rollWidth,
                 rollLength,

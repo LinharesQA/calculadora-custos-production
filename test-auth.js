@@ -18,13 +18,13 @@ if (token) {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('✅ Teste API moldes:', data);
-    })
-    .catch(error => {
-        console.error('❌ Erro API moldes:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log('✅ Teste API moldes:', data);
+        })
+        .catch(error => {
+            console.error('❌ Erro API moldes:', error);
+        });
 } else {
     console.log('⚠️ Você precisa fazer login primeiro!');
 }
