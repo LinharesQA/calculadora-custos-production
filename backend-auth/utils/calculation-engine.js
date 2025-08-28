@@ -18,6 +18,14 @@ class CalculationEngine {
      */
     static validateInput(data) {
         console.log('🔍 Validando dados recebidos:', data);
+        console.log('📊 Valores individuais:');
+        console.log('- rollWidth:', data.rollWidth, typeof data.rollWidth);
+        console.log('- rollLength:', data.rollLength, typeof data.rollLength);
+        console.log('- rollPrice:', data.rollPrice, typeof data.rollPrice);
+        console.log('- profitMargin:', data.profitMargin, typeof data.profitMargin);
+        console.log('- additionalCost:', data.additionalCost, typeof data.additionalCost);
+        console.log('- items:', data.items, Array.isArray(data.items));
+
         const { rollWidth, rollLength, rollPrice, profitMargin, additionalCost, items } = data;
 
         const errors = [];
@@ -79,6 +87,24 @@ class CalculationEngine {
      * Calcula otimização de moldes em uma bobina
      */
     static calculateMoldOptimization(moldWidth, moldHeight, quantity, rollWidth) {
+        console.log('🔧 calculateMoldOptimization - Parâmetros recebidos:', {
+            moldWidth, moldHeight, quantity, rollWidth
+        });
+
+        // Validar se os parâmetros existem
+        if (moldWidth === undefined || moldWidth === null) {
+            throw new Error('moldWidth is not defined na função calculateMoldOptimization');
+        }
+        if (moldHeight === undefined || moldHeight === null) {
+            throw new Error('moldHeight is not defined na função calculateMoldOptimization');
+        }
+        if (quantity === undefined || quantity === null) {
+            throw new Error('quantity is not defined na função calculateMoldOptimization');
+        }
+        if (rollWidth === undefined || rollWidth === null) {
+            throw new Error('rollWidth is not defined na função calculateMoldOptimization');
+        }
+
         // moldWidth já está em cm (não converter)
         // Quantos moldes cabem na largura
         const moldsAcross = Math.floor(rollWidth / moldWidth);
@@ -215,6 +241,13 @@ class CalculationEngine {
 
                 // ÚNICA validação específica: molde maior que bobina
                 const moldWidthValidated = this.validateMoldFitsInRoll(mold.width, rollWidth, mold.name);
+
+                console.log('🎯 Chamando calculateMoldOptimization com:', {
+                    width: mold.width,
+                    height: mold.height,
+                    quantity: quantity,
+                    rollWidth: rollWidth
+                });
 
                 // Calcular otimização
                 const optimization = this.calculateMoldOptimization(
