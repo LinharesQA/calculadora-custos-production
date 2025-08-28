@@ -250,10 +250,29 @@ router.post('/:id/calculate',
             }
 
             // Calcular custos
-            const rollPrice = parseFloat(project.roll_price);
-            const rollLength = parseFloat(project.roll_length);
-            const profitMargin = parseFloat(project.profit_margin);
-            const additionalCost = parseFloat(project.additional_cost);
+            const rollPrice = parseFloat(project.roll_price) || 0;
+            const rollLength = parseFloat(project.roll_length) || 0;
+            const profitMargin = parseFloat(project.profit_margin) || 0;
+            const additionalCost = parseFloat(project.additional_cost) || 0;
+
+            // Validar dados básicos
+            if (rollPrice <= 0) {
+                return res.status(400).json({
+                    error: 'Preço da bobina deve ser maior que zero'
+                });
+            }
+
+            if (rollLength <= 0) {
+                return res.status(400).json({
+                    error: 'Comprimento da bobina deve ser maior que zero'
+                });
+            }
+
+            if (rollWidth <= 0) {
+                return res.status(400).json({
+                    error: 'Largura da bobina deve ser maior que zero'
+                });
+            }
 
             // Área total dos itens
             let totalArea = 0;
@@ -282,7 +301,17 @@ router.post('/:id/calculate',
             }
 
             // Cálculos
-            const rollTotalArea = rollWidth * (rollLength * 100); // converter m para cm
+            // rollWidth já está em cm, rollLength deve estar em metros
+            // Converter metros para centímetros: rollLength * 100
+            const rollTotalArea = rollWidth * (rollLength * 100); // cm × cm = cm²
+
+            // Verificar se temos área válida para evitar divisão por zero
+            if (rollTotalArea <= 0) {
+                return res.status(400).json({
+                    error: 'Área da bobina inválida. Verifique largura e comprimento.'
+                });
+            }
+
             const costPerCm2 = rollPrice / rollTotalArea;
             const materialCost = totalArea * costPerCm2;
             const totalCost = materialCost + additionalCost;
@@ -298,6 +327,14 @@ router.post('/:id/calculate',
                 calculatedItems,
                 calculatedAt: new Date().toISOString()
             };
+
+            // Validar se os cálculos são válidos
+            if (!isFinite(totalCost) || !isFinite(totalPrice) || !isFinite(totalProfit)) {
+                console.error('Cálculos inválidos:', { totalCost, totalPrice, totalProfit, rollTotalArea, costPerCm2 });
+                return res.status(400).json({
+                    error: 'Erro nos cálculos. Verifique os dados da bobina e moldes.'
+                });
+            }
 
             // Atualizar projeto
             await project.update({
