@@ -1174,7 +1174,7 @@
                             </div>
                             <div class="library-item-info">
                                 <h5>${mold.name}</h5>
-                                <p>${mold.width}cm × ${mold.height}cm • Área: ${((mold.width * mold.height) / 10000).toFixed(4)}m²</p>
+                                <p>${mold.width}cm × ${mold.height}cm • Área: ${((mold.width * mold.height) / 10000).toFixed(2)}m²</p>
                             </div>
                         </div>
                         <div class="library-item-actions">
@@ -1347,8 +1347,6 @@
                     }))
                 };
 
-                showNotification('Calculando no servidor...', 'info');
-
                 const projectResult = await api.createProject(projectData);
                 console.log('✅ Projeto criado no backend:', projectResult);
 
@@ -1405,7 +1403,11 @@
 
                 // Mensagem mais específica baseada no tipo de erro
                 let errorMessage = error.message;
-                if (error.message.includes('maior que a largura da bobina')) {
+
+                // Tratar erros comuns de JavaScript
+                if (error.message.includes('not defined') || error.message.includes('undefined')) {
+                    errorMessage = 'Erro interno: Alguns dados estão faltando. Verifique se todos os campos estão preenchidos.';
+                } else if (error.message.includes('maior que a largura da bobina')) {
                     errorMessage += '\n\n💡 Sugestões:\n• Use uma bobina mais larga\n• Escolha um molde menor\n• Rotacione o molde se possível';
                 } else if (error.message.includes('Papel insuficiente')) {
                     errorMessage += '\n\n💡 Sugestões:\n• Use uma bobina com mais metragem\n• Reduza a quantidade de peças\n• Otimize o layout';
@@ -1551,7 +1553,7 @@
                                             <td class="text-center p-3 text-white/80">${item.moldsAcross}</td>
                                             <td class="text-center p-3 text-white/80">${item.totalRows}</td>
                                             <td class="text-center p-3 text-white/80">${item.lengthNeeded.toFixed(2)}m</td>
-                                            <td class="text-center p-3 text-white/80">${item.totalMoldArea.toFixed(4)}m²</td>
+                                            <td class="text-center p-3 text-white/80">${item.totalMoldArea.toFixed(2)}m²</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
