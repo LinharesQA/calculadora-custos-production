@@ -1299,10 +1299,23 @@
 
                 // Calcular otimização para cada item
                 const calculationResults = planningItems.map(item => {
+                    // Debug: verificar valores antes do cálculo
+                    console.log(`🔍 DEBUG - Calculando moldsAcross:`, {
+                        moldeName: item.mold.name,
+                        moldWidth: item.mold.width,
+                        moldWidthType: typeof item.mold.width,
+                        rollName: roll.name,
+                        rollWidth: roll.width,
+                        rollWidthType: typeof roll.width,
+                        division: roll.width / item.mold.width
+                    });
+
                     const moldsAcross = Math.floor(roll.width / item.mold.width);
+                    console.log(`🔢 moldsAcross resultado:`, moldsAcross);
 
                     // Verificar se o molde cabe na bobina
                     if (moldsAcross === 0) {
+                        console.log(`❌ VALIDAÇÃO ATIVADA: moldsAcross = 0`);
                         throw new Error(`Molde "${item.mold.name}" (${item.mold.width}cm) é maior que a largura da bobina "${roll.name}" (${roll.width}cm). Use uma bobina mais larga ou um molde menor.`);
                     }
 
