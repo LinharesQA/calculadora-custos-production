@@ -183,9 +183,6 @@ class CalculationEngine {
             const { rollWidth, rollLength, rollPrice, profitMargin, additionalCost, items } = data;
 
             // rollWidth já está em cm
-            // Quantos moldes cabem na largura
-            const moldsAcross = Math.floor(rollWidth / moldWidth);
-
             let totalLengthNeeded = 0;
             let totalPieces = 0;
             let totalMoldArea = 0;
