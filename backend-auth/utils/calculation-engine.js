@@ -87,57 +87,41 @@ class CalculationEngine {
      * Calcula otimização de moldes em uma bobina
      */
     static calculateMoldOptimization(moldWidth, moldHeight, quantity, rollWidth) {
-        console.log('🔧 calculateMoldOptimization - Parâmetros recebidos:', {
-            moldWidth, moldHeight, quantity, rollWidth
-        });
+        try {
+            // Verificar se todas as variáveis existem
+            if (typeof moldWidth === 'undefined') throw new Error('moldWidth é undefined');
+            if (typeof moldHeight === 'undefined') throw new Error('moldHeight é undefined');
+            if (typeof quantity === 'undefined') throw new Error('quantity é undefined');
+            if (typeof rollWidth === 'undefined') throw new Error('rollWidth é undefined');
 
-        // Validar se os parâmetros existem
-        if (moldWidth === undefined || moldWidth === null) {
-            throw new Error('moldWidth is not defined na função calculateMoldOptimization');
+            // Quantos moldes cabem na largura
+            const moldsAcross = Math.floor(rollWidth / moldWidth);
+
+            if (moldsAcross <= 0) {
+                throw new Error(`Molde ${moldWidth}cm não cabe na bobina ${rollWidth}cm`);
+            }
+
+            // Quantas linhas são necessárias
+            const totalRows = Math.ceil(quantity / moldsAcross);
+
+            // Comprimento necessário (converter altura de cm para metros)
+            const lengthNeeded = totalRows * (moldHeight / 100);
+
+            // Área do molde em m² (converter de cm² para m²)
+            const moldAreaM2 = (moldWidth * moldHeight) / 10000;
+            const totalMoldArea = moldAreaM2 * quantity;
+
+            return {
+                moldsAcross,
+                totalRows,
+                lengthNeeded,
+                moldAreaM2,
+                totalMoldArea
+            };
+        } catch (error) {
+            console.error('❌ Erro em calculateMoldOptimization:', error);
+            throw error;
         }
-        if (moldHeight === undefined || moldHeight === null) {
-            throw new Error('moldHeight is not defined na função calculateMoldOptimization');
-        }
-        if (quantity === undefined || quantity === null) {
-            throw new Error('quantity is not defined na função calculateMoldOptimization');
-        }
-        if (rollWidth === undefined || rollWidth === null) {
-            throw new Error('rollWidth is not defined na função calculateMoldOptimization');
-        }
-
-        // moldWidth já está em cm (não converter)
-        // Quantos moldes cabem na largura
-        const moldsAcross = Math.floor(rollWidth / moldWidth);
-
-        if (moldsAcross <= 0) {
-            throw new Error(`Impossível calcular: molde ${moldWidth}cm não cabe na bobina ${rollWidth}cm`);
-        }
-
-        // Quantas linhas são necessárias
-        const totalRows = Math.ceil(quantity / moldsAcross);
-
-        // Comprimento necessário (converter altura de cm para metros)
-        const lengthNeeded = totalRows * (moldHeight / 100);
-
-        // Área do molde em m² (converter de cm² para m²)
-        const moldAreaM2 = (moldWidth * moldHeight) / 10000;
-        const totalMoldArea = moldAreaM2 * quantity;
-
-        // Validar resultados
-        if (!this.isValidNumber(moldsAcross) ||
-            !this.isValidNumber(totalRows) ||
-            !this.isValidNumber(lengthNeeded) ||
-            !this.isValidNumber(totalMoldArea)) {
-            throw new Error('Erro nos cálculos de otimização. Verifique as dimensões.');
-        }
-
-        return {
-            moldsAcross,
-            totalRows,
-            lengthNeeded,
-            moldAreaM2,
-            totalMoldArea
-        };
     }
 
     /**
