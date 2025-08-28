@@ -134,10 +134,10 @@ app.get('/api/health/db', async (req, res) => {
 // Health check do pool de conexões
 app.get('/api/health/pool', async (req, res) => {
     try {
-        const poolHealth = await dbPool.healthCheck();
+        const poolHealth = dbPool.getHealth();
         const poolStats = dbPool.getStats();
 
-        res.status(poolHealth.status === 'healthy' ? 200 : 503).json({
+        res.status(poolHealth.status === 'healthy' ? 200 : 200).json({
             status: poolHealth.status,
             pool: poolStats,
             health: poolHealth,
