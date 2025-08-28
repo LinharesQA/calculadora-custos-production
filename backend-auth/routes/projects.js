@@ -246,10 +246,27 @@ router.post('/:id/calculate',
             let rollWidth = 0;
             if (project.roll_id) {
                 const roll = await Roll.findByPk(project.roll_id);
-                rollWidth = parseFloat(roll.width);
+                if (roll) {
+                    rollWidth = parseFloat(roll.width);
+                } else {
+                    return res.status(400).json({
+                        error: 'Bobina associada ao projeto não encontrada'
+                    });
+                }
+            } else {
+                return res.status(400).json({
+                    error: 'Projeto não possui bobina associada'
+                });
             }
 
-            // Calcular custos
+            console.log('🔍 Debug - Dados da bobina:', {
+                rollWidth,
+                rollPrice: parseFloat(project.roll_price),
+                rollLength: parseFloat(project.roll_length),
+                roll_id: project.roll_id
+            });
+
+            // Validar dados básicos (extraindo do projeto)
             const rollPrice = parseFloat(project.roll_price) || 0;
             const rollLength = parseFloat(project.roll_length) || 0;
             const profitMargin = parseFloat(project.profit_margin) || 0;
@@ -304,6 +321,13 @@ router.post('/:id/calculate',
             // rollWidth já está em cm, rollLength deve estar em metros
             // Converter metros para centímetros: rollLength * 100
             const rollTotalArea = rollWidth * (rollLength * 100); // cm × cm = cm²
+            
+            console.log('🔍 Debug - Cálculos:', {
+                rollWidth,
+                rollLength,
+                rollTotalArea,
+                totalArea
+            });
 
             // Verificar se temos área válida para evitar divisão por zero
             if (rollTotalArea <= 0) {
@@ -317,6 +341,14 @@ router.post('/:id/calculate',
             const totalCost = materialCost + additionalCost;
             const totalPrice = totalCost * (1 + profitMargin / 100);
             const totalProfit = totalPrice - totalCost;
+
+            console.log('🔍 Debug - Resultados:', {
+                costPerCm2,
+                materialCost,
+                totalCost,
+                totalPrice,
+                totalProfit
+            });
 
             const calculationData = {
                 rollWidth,

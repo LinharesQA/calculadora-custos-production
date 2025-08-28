@@ -273,7 +273,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/molds', moldsRoutes);
 app.use('/api/rolls', rollsRoutes);
 app.use('/api/projects', projectsRoutes);
-app.use('/api/projects', calculationsRoutes);
+// app.use('/api/projects', calculationsRoutes); // REMOVIDO - usando só a rota em projects.js
 
 // Middleware de erro global
 app.use((err, req, res, next) => {
