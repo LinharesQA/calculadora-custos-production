@@ -13,9 +13,9 @@ class RedisSessionManager {
         const redisUrl = process.env.REDIS_URL;
         const nodeEnv = process.env.NODE_ENV || 'development';
 
-        // Em desenvolvimento, usar mock se Redis não disponível
-        if (!redisUrl && nodeEnv === 'development') {
-            console.log('🔄 Redis: Modo desenvolvimento - usando sessões em memória');
+        // Se não há URL do Redis, usar modo desenvolvimento
+        if (!redisUrl) {
+            console.log('🔄 Redis: URL não configurada - usando sessões em memória');
             return null;
         }
 
@@ -23,28 +23,27 @@ class RedisSessionManager {
 
         try {
             this.client = redis.createClient({
-                url: redisUrl || 'redis://localhost:6379',
+                url: redisUrl,
                 // Configurações otimizadas para sessões
                 retry_delay_on_failover: 100,
                 retry_delay_on_cluster_down: 300,
-                max_attempts: this.maxReconnectAttempts,
+                max_attempts: 3, // Reduzido para produção
 
                 // Pool de conexões para performance
                 socket: {
                     keepAlive: true,
+                    connectTimeout: 5000, // 5s timeout para conectar
                     reconnectStrategy: (retries) => {
-                        if (retries >= this.maxReconnectAttempts) {
-                            console.error('❌ Redis: Máximo de tentativas de reconexão atingido');
+                        if (retries >= 3) {
+                            console.error('❌ Redis: Máximo de tentativas atingido - continuando sem Redis');
                             return false;
                         }
-                        const delay = Math.min(retries * 50, 3000);
-                        console.log(`🔄 Redis: Tentativa de reconexão ${retries + 1} em ${delay}ms`);
+                        const delay = Math.min(retries * 1000, 3000);
+                        console.log(`🔄 Redis: Tentativa ${retries + 1}/3 em ${delay}ms`);
                         return delay;
                     }
                 }
-            });
-
-            // Event listeners para monitoramento
+            });            // Event listeners para monitoramento
             this.client.on('connect', () => {
                 console.log('🔌 Redis: Conectando...');
             });

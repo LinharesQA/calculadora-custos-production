@@ -78,35 +78,42 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Configurar sessões (deve vir antes do passport)
+// Função para configurar sessões Redis ou fallback
 async function setupSessions() {
     try {
-        // Inicializar Redis para sessões
+        console.log('🔄 Configurando sistema de sessões...');
+
+        // Tentar conectar ao Redis (não bloquear se falhar)
         await redisSession.createConnection();
 
-        // Configurar sessões com Redis ou MemoryStore
+        // Configurar sessões (Redis ou MemoryStore)
         const sessionConfig = redisSession.getSessionConfig();
         app.use(session(sessionConfig));
 
-        console.log('✅ Sessions: Configuração aplicada');
+        console.log('✅ Sistema de sessões configurado');
+        return true;
     } catch (error) {
         console.error('❌ Erro ao configurar sessões:', error.message);
-        // Fallback para sessões em memória
+
+        // Fallback para MemoryStore simples
+        console.log('🔄 Usando fallback para sessões em memória...');
         app.use(session({
-            name: 'sublimacalc_session',
-            secret: process.env.SESSION_SECRET || 'dev-secret-fallback',
+            secret: process.env.SESSION_SECRET || 'dev_session_secret',
             resave: false,
             saveUninitialized: false,
-            cookie: { maxAge: 24 * 60 * 60 * 1000 }
+            cookie: {
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 24 * 60 * 60 * 1000 // 24 horas
+            },
+            name: 'sessionId'
         }));
-        console.log('⚠️ Sessions: Usando fallback MemoryStore');
+
+        console.log('✅ Sistema de sessões fallback configurado');
+        return false;
     }
 }
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Health check
+// Passport será inicializado DEPOIS das sessões na função startServer// Health check
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'OK',
@@ -286,6 +293,11 @@ async function startServer() {
 
         // Configurar sessões Redis
         await setupSessions();
+
+        // Configurar Passport APÓS as sessões
+        app.use(passport.initialize());
+        app.use(passport.session());
+        console.log('✅ Passport configurado com sessões');
 
         // Sincronizar modelos (apenas em desenvolvimento)
         if (process.env.NODE_ENV === 'development') {
