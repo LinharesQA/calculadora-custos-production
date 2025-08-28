@@ -41,6 +41,7 @@
         "sqlite3": "^5.1.6",
         "sequelize": "^6.32.1",
         "express-rate-limit": "^6.10.0",
+        "express-slow-down": "^2.0.1",
         "express-validator": "^7.0.1",
         "uuid": "^9.0.0",
         "compression": "^1.7.4"

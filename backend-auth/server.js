@@ -5,6 +5,9 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const passport = require('passport');
 
+// Performance middleware
+const { compressionMiddleware, basicLimit } = require('./middleware/performance');
+
 // Configurar dotenv baseado no ambiente
 const path = require('path');
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
@@ -52,8 +55,8 @@ app.use(helmet({
     }
 }));
 
-app.use(compression());
-app.use(limiter);
+app.use(compressionMiddleware);
+app.use(basicLimit);
 
 // CORS configurado para o frontend
 app.use(cors({
