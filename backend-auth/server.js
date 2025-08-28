@@ -16,6 +16,7 @@ require('dotenv').config({ path: path.join(__dirname, envFile) });
 // Importar configurações
 require('./config/passport');
 const { sequelize } = require('./config/database');
+const dbPool = require('./services/databasePool');
 
 // Importar rotas
 const authRoutes = require('./routes/auth');
@@ -130,6 +131,27 @@ app.get('/api/health/db', async (req, res) => {
     }
 });
 
+// Health check do pool de conexões
+app.get('/api/health/pool', async (req, res) => {
+    try {
+        const poolHealth = await dbPool.healthCheck();
+        const poolStats = dbPool.getStats();
+
+        res.status(poolHealth.status === 'healthy' ? 200 : 503).json({
+            status: poolHealth.status,
+            pool: poolStats,
+            health: poolHealth,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(503).json({
+            status: 'ERROR',
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
 // Rotas da API
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
@@ -180,6 +202,12 @@ async function startServer() {
         if (process.env.NODE_ENV === 'development') {
             await sequelize.sync({ alter: true });
             console.log('✅ Modelos sincronizados com o banco');
+        }
+
+        // Inicializar pool de conexões (produção)
+        if (process.env.DATABASE_URL && process.env.NODE_ENV === 'production') {
+            dbPool.createPool();
+            console.log('🔄 Pool de conexões PostgreSQL inicializado');
         }
 
         // Iniciar servidor

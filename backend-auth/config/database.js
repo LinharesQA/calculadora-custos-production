@@ -15,10 +15,12 @@ function createSequelizeInstance() {
             dialect: 'postgres',
             logging: false,
             pool: {
-                max: 20,
-                min: 5,
-                acquire: 60000,
-                idle: 10000
+                max: 25,        // Máximo de conexões (otimizado para 100+ usuários)
+                min: 8,         // Mínimo de conexões sempre ativas
+                acquire: 30000, // 30s para adquirir conexão
+                idle: 10000,    // 10s antes de liberar conexão idle
+                evict: 5000,    // Verificar conexões idle a cada 5s
+                handleDisconnects: true
             },
             define: {
                 timestamps: true,
@@ -46,10 +48,12 @@ function createSequelizeInstance() {
             dialect: 'postgres',
             logging: false,
             pool: {
-                max: 20,
-                min: 5,
-                acquire: 60000,
-                idle: 10000
+                max: 25,        // Máximo de conexões (otimizado para 100+ usuários)
+                min: 8,         // Mínimo de conexões sempre ativas
+                acquire: 30000, // 30s para adquirir conexão
+                idle: 10000,    // 10s antes de liberar conexão idle
+                evict: 5000,    // Verificar conexões idle a cada 5s
+                handleDisconnects: true
             },
             define: {
                 timestamps: true,
