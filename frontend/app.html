@@ -1310,20 +1310,40 @@
                         division: roll.width / item.mold.width
                     });
 
-                    const moldsAcross = Math.floor(roll.width / item.mold.width);
-                    console.log(`🔢 moldsAcross resultado:`, moldsAcross);
+                    // Converter para números se necessário
+                    const moldWidth = parseFloat(item.mold.width);
+                    const rollWidth = parseFloat(roll.width);
 
-                    // Verificar se o molde cabe na bobina
-                    if (moldsAcross === 0) {
-                        console.log(`❌ VALIDAÇÃO ATIVADA: moldsAcross = 0`);
-                        throw new Error(`Molde "${item.mold.name}" (${item.mold.width}cm) é maior que a largura da bobina "${roll.name}" (${roll.width}cm). Use uma bobina mais larga ou um molde menor.`);
+                    console.log(`� Valores convertidos:`, { moldWidth, rollWidth });
+
+                    // Validação robusta
+                    if (!isFinite(moldWidth) || !isFinite(rollWidth) || moldWidth <= 0 || rollWidth <= 0) {
+                        throw new Error(`Dados inválidos: Molde width=${moldWidth}, Roll width=${rollWidth}`);
                     }
 
-                    const moldHeight = item.mold.height / 100; // converter para metros
+                    if (moldWidth > rollWidth) {
+                        throw new Error(`Molde "${item.mold.name}" (${moldWidth}cm) é maior que a largura da bobina "${roll.name}" (${rollWidth}cm). Use uma bobina mais larga ou um molde menor.`);
+                    }
+
+                    const moldsAcross = Math.floor(rollWidth / moldWidth);
+                    console.log(`🔢 moldsAcross resultado:`, moldsAcross);
+
+                    // Verificação adicional de segurança
+                    if (moldsAcross === 0 || !isFinite(moldsAcross)) {
+                        console.log(`❌ VALIDAÇÃO ATIVADA: moldsAcross = ${moldsAcross}`);
+                        throw new Error(`Impossível calcular: molde ${moldWidth}cm não cabe na bobina ${rollWidth}cm`);
+                    }
+
+                    const moldHeight = parseFloat(item.mold.height) / 100; // converter para metros
                     const totalRows = Math.ceil(item.qty / moldsAcross);
                     const lengthNeeded = totalRows * moldHeight;
-                    const rollAreaUsed = lengthNeeded * (roll.width / 100); // área da bobina utilizada
-                    const moldAreaTotal = (item.mold.width / 100) * (item.mold.height / 100) * item.qty; // área real dos moldes
+                    const rollAreaUsed = lengthNeeded * (rollWidth / 100); // área da bobina utilizada
+                    const moldAreaTotal = (moldWidth / 100) * (moldHeight * 100) * item.qty; // área real dos moldes
+
+                    // Validar se todos os cálculos são finitos
+                    if (!isFinite(moldHeight) || !isFinite(totalRows) || !isFinite(lengthNeeded) || !isFinite(rollAreaUsed) || !isFinite(moldAreaTotal)) {
+                        throw new Error(`Erro nos cálculos intermediários para molde ${item.mold.name}`);
+                    }
 
                     console.log(`🔍 Item ${item.mold.name}:`, {
                         moldsAcross,

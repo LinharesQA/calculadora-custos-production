@@ -307,14 +307,14 @@ router.post('/:id/calculate',
 
                 if (moldId) {
                     const mold = await Mold.findByPk(moldId);
-                    
+
                     // VALIDAÇÃO: Verificar se o molde cabe na bobina
                     if (parseFloat(mold.width) > rollWidth) {
                         return res.status(400).json({
                             error: `Molde "${mold.name}" (${mold.width}cm de largura) é maior que a largura da bobina (${rollWidth}cm). Use uma bobina mais larga ou um molde menor.`
                         });
                     }
-                    
+
                     const moldArea = parseFloat(mold.width) * parseFloat(mold.height);
                     const itemTotalArea = moldArea * parseInt(quantity);
 
