@@ -1,8 +1,11 @@
 // API Client para comunicação com o backend
 class SublimaCalcAPI {
     constructor() {
-        this.baseURL = 'http://localhost:3001/api';
+        // 🌐 USAR CONFIGURAÇÃO DINÂMICA POR AMBIENTE
+        this.baseURL = window.APP_CONFIG ? window.APP_CONFIG.getBackendURL() : 'http://localhost:3001/api';
         this.token = localStorage.getItem('authToken');
+
+        console.log('🔗 API configurada para:', this.baseURL);
     }
 
     // Headers padrão com autenticação

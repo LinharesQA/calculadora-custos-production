@@ -582,9 +582,11 @@
                                         placeholder="Nome do molde (ex: Caneca Branca 325ml)"
                                         class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/30 transition-all duration-300">
                                     <div class="grid grid-cols-2 gap-4">
-                                        <input type="number" id="new-mold-width" placeholder="Largura (cm)" step="0.1"
+                                        <input type="number" id="new-mold-width" placeholder="Largura (metros)"
+                                            step="0.01"
                                             class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/30 transition-all duration-300">
-                                        <input type="number" id="new-mold-height" placeholder="Altura (cm)" step="0.1"
+                                        <input type="number" id="new-mold-height" placeholder="Altura (metros)"
+                                            step="0.01"
                                             class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-primary-400/60 focus:ring-2 focus:ring-primary-400/30 transition-all duration-300">
                                     </div>
                                     <button id="add-mold-btn"
@@ -644,7 +646,7 @@
                                     <input type="text" id="new-roll-name"
                                         placeholder="Nome da bobina (ex: Papel Sublimático A4)"
                                         class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-secondary-400/60 focus:ring-2 focus:ring-secondary-400/30 transition-all duration-300">
-                                    <input type="number" id="new-roll-width" placeholder="Largura (cm)" step="0.1"
+                                    <input type="number" id="new-roll-width" placeholder="Largura (metros)" step="0.01"
                                         class="w-full glass border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:glass-dark focus:border-secondary-400/60 focus:ring-2 focus:ring-secondary-400/30 transition-all duration-300">
                                     <button id="add-roll-btn"
                                         class="w-full bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-500/30 transform hover:scale-[1.02] hover-glow">
@@ -1174,7 +1176,7 @@
                             </div>
                             <div class="library-item-info">
                                 <h5>${mold.name}</h5>
-                                <p>${mold.width}cm × ${mold.height}cm • Área: ${(mold.width * mold.height).toFixed(1)}cm²</p>
+                                <p>${mold.width}m × ${mold.height}m • Área: ${(mold.width * mold.height).toFixed(4)}m²</p>
                             </div>
                         </div>
                         <div class="library-item-actions">
@@ -1220,7 +1222,7 @@
                             </div>
                             <div class="library-item-info">
                                 <h5>${roll.name}</h5>
-                                <p>${roll.width}cm de largura • Papel sublimático</p>
+                                <p>${roll.width}m de largura • Papel sublimático</p>
                             </div>
                         </div>
                         <div class="library-item-actions">
@@ -1245,7 +1247,7 @@
             appState.molds.forEach((mold, index) => {
                 const option = document.createElement('option');
                 option.value = index;
-                option.textContent = `${mold.name} (${mold.width}×${mold.height}cm)`;
+                option.textContent = `${mold.name} (${mold.width}×${mold.height}m)`;
                 select.appendChild(option);
             });
         }
@@ -1258,7 +1260,7 @@
             appState.rolls.forEach((roll, index) => {
                 const option = document.createElement('option');
                 option.value = index;
-                option.textContent = `${roll.name} (${roll.width}cm)`;
+                option.textContent = `${roll.name} (${roll.width}m)`;
                 select.appendChild(option);
             });
         }
@@ -1275,7 +1277,7 @@
                     const div = document.createElement('div');
                     div.className = 'flex justify-between items-center p-3 glass rounded-xl border border-white/10';
                     div.innerHTML = `
-                        <span class="text-sm text-white">${item.qty}x ${item.mold.name} (${item.mold.width}×${item.mold.height}cm)</span>
+                        <span class="text-sm text-white">${item.qty}x ${item.mold.name} (${item.mold.width}×${item.mold.height}m)</span>
                         <button onclick="removePlanningItem(${index})" class="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-400/10 transition-all">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -1546,12 +1548,12 @@
                                 <tbody>
                                     ${data.items.map(item => `
                                         <tr class="border-b border-white/10">
-                                            <td class="p-3 font-medium text-white">${item.mold.name}</td>
-                                            <td class="text-center p-3 text-white/80">${item.qty}x</td>
+                                            <td class="p-3 font-medium text-white">${item.moldName}</td>
+                                            <td class="text-center p-3 text-white/80">${item.quantity}x</td>
                                             <td class="text-center p-3 text-white/80">${item.moldsAcross}</td>
                                             <td class="text-center p-3 text-white/80">${item.totalRows}</td>
                                             <td class="text-center p-3 text-white/80">${item.lengthNeeded.toFixed(2)}m</td>
-                                            <td class="text-center p-3 text-white/80">${item.areaNeeded.toFixed(2)}m²</td>
+                                            <td class="text-center p-3 text-white/80">${item.totalMoldArea.toFixed(4)}m²</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
