@@ -19,6 +19,7 @@ require('./config/passport');
 const { sequelize } = require('./config/database');
 const dbPool = require('./services/databasePool');
 const redisSession = require('./services/redisSession');
+const redisCache = require('./services/redisCache');
 
 // Importar rotas
 const authRoutes = require('./routes/auth');
@@ -198,6 +199,27 @@ app.get('/api/health/redis', async (req, res) => {
             status: redisHealth.status,
             redis: redisHealth,
             sessions: sessionStats,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(503).json({
+            status: 'ERROR',
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
+// Health check do Cache Redis
+app.get('/api/health/cache', async (req, res) => {
+    try {
+        const cacheHealth = await redisCache.getHealth();
+        const cacheStats = redisCache.getStats();
+
+        res.status(cacheHealth.status === 'healthy' ? 200 : 200).json({
+            status: cacheHealth.status,
+            cache: cacheHealth,
+            stats: cacheStats,
             timestamp: new Date().toISOString()
         });
     } catch (error) {
