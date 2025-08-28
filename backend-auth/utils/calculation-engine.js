@@ -55,41 +55,37 @@ class CalculationEngine {
      * Verifica se molde cabe na bobina
      */
     static validateMoldFitsInRoll(moldWidth, rollWidth, moldName) {
-        // Converter molde de metros para cm
-        const moldWidthCm = moldWidth * 100;
-
-        if (moldWidthCm > rollWidth) {
+        // moldWidth já está em cm (não converter)
+        if (moldWidth > rollWidth) {
             throw new Error(
-                `Molde "${moldName}" (${moldWidth}m = ${moldWidthCm.toFixed(1)}cm) é maior que a bobina (${(rollWidth / 100).toFixed(2)}m = ${rollWidth}cm). ` +
+                `Molde "${moldName}" (${moldWidth}cm) é maior que a bobina (${rollWidth}cm). ` +
                 `Use uma bobina mais larga ou um molde menor.`
             );
         }
 
-        return moldWidthCm;
+        return moldWidth;
     }
 
     /**
      * Calcula otimização de moldes em uma bobina
      */
     static calculateMoldOptimization(moldWidth, moldHeight, quantity, rollWidth) {
-        // Converter molde de metros para cm para cálculo de otimização
-        const moldWidthCm = moldWidth * 100;
-
+        // moldWidth já está em cm (não converter)
         // Quantos moldes cabem na largura
-        const moldsAcross = Math.floor(rollWidth / moldWidthCm);
+        const moldsAcross = Math.floor(rollWidth / moldWidth);
 
         if (moldsAcross <= 0) {
-            throw new Error(`Impossível calcular: molde ${moldWidth}m não cabe na bobina ${(rollWidth / 100).toFixed(2)}m`);
+            throw new Error(`Impossível calcular: molde ${moldWidth}cm não cabe na bobina ${rollWidth}cm`);
         }
 
         // Quantas linhas são necessárias
         const totalRows = Math.ceil(quantity / moldsAcross);
 
-        // Comprimento necessário (molde já está em metros)
-        const lengthNeeded = totalRows * moldHeight;
+        // Comprimento necessário (converter altura de cm para metros)
+        const lengthNeeded = totalRows * (moldHeight / 100);
 
-        // Área do molde em m²
-        const moldAreaM2 = moldWidth * moldHeight;
+        // Área do molde em m² (converter de cm² para m²)
+        const moldAreaM2 = (moldWidth * moldHeight) / 10000;
         const totalMoldArea = moldAreaM2 * quantity;
 
         // Validar resultados
@@ -167,8 +163,9 @@ class CalculationEngine {
 
             const { rollWidth, rollLength, rollPrice, profitMargin, additionalCost, items } = data;
 
-            // Converter rollWidth de metros para cm para cálculos
-            const rollWidthCm = rollWidth * 100;
+            // rollWidth já está em cm
+            // Quantos moldes cabem na largura
+            const moldsAcross = Math.floor(rollWidth / moldWidth);
 
             let totalLengthNeeded = 0;
             let totalPieces = 0;
@@ -190,11 +187,11 @@ class CalculationEngine {
                 }
 
                 // Verificar se molde cabe na bobina
-                const moldWidthCm = this.validateMoldFitsInRoll(mold.width, rollWidthCm, mold.name);
+                const moldWidthValidated = this.validateMoldFitsInRoll(mold.width, rollWidth, mold.name);
 
                 // Calcular otimização
                 const optimization = this.calculateMoldOptimization(
-                    mold.width, mold.height, quantity, rollWidthCm
+                    mold.width, mold.height, quantity, rollWidth
                 );
 
                 totalLengthNeeded += optimization.lengthNeeded;
@@ -226,7 +223,7 @@ class CalculationEngine {
 
             // 4. Calcular custos
             const costs = this.calculateCosts(
-                totalLengthNeeded, rollWidthCm, rollPrice, rollLength,
+                totalLengthNeeded, rollWidth, rollPrice, rollLength,
                 additionalCost, profitMargin, totalPieces
             );
 

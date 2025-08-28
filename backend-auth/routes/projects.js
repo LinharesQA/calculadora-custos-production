@@ -213,7 +213,7 @@ router.post('/:id/calculate',
 
             // Preparar dados para o motor de cálculo
             const calculationData = {
-                rollWidth: parseFloat(roll.width), // já em metros
+                rollWidth: parseFloat(roll.width), // em centímetros
                 rollLength: parseFloat(project.roll_length),
                 rollPrice: parseFloat(project.roll_price),
                 profitMargin: parseFloat(project.profit_margin),
@@ -227,8 +227,8 @@ router.post('/:id/calculate',
                         mold: {
                             id: mold.id,
                             name: mold.name,
-                            width: parseFloat(mold.width), // já em metros
-                            height: parseFloat(mold.height) // já em metros
+                            width: parseFloat(mold.width), // em centímetros
+                            height: parseFloat(mold.height) // em centímetros
                         },
                         quantity: parseInt(item.quantity)
                     };
