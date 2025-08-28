@@ -100,7 +100,7 @@ async function calculateCostsBackendOnly() {
             saveAppState();
             updateDashboard();
 
-            showNotification('✅ Cálculo realizado com sucesso no servidor!', 'success');
+            showNotification('✅ Cálculo realizado com sucesso!', 'success');
         } else {
             throw new Error('Resultado inválido do servidor');
         }
